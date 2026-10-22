@@ -8,18 +8,10 @@ from rdflib.compare import isomorphic
 from shacl_compare.graph_io import graph_contains_blank_nodes
 from shacl_compare.terms import serialize_triple, triple_key
 
-# Soft bound: above this, blank-node pairs are not analysed further.
 MAX_TRIPLES_FOR_ISO = 50_000
 
 
 def diff_graphs(before: Graph, after: Graph) -> dict[str, Any]:
-    """Compare two graphs under the v0.1 blank-node policy.
-
-    Ground graphs: exact triple set difference (RESOLVED).
-    Blank nodes present:
-      - isomorphic → RESOLVED empty edit list (no structural change)
-      - otherwise → AMBIGUOUS with no invented triple edit mapping
-    """
     before_has_b = graph_contains_blank_nodes(before)
     after_has_b = graph_contains_blank_nodes(after)
 
@@ -52,7 +44,6 @@ def diff_graphs(before: Graph, after: Graph) -> dict[str, Any]:
             "unchanged": True,
         }
 
-    # Isomorphism does not yield a unique trustworthy edit mapping.
     return {
         "diff_status": "AMBIGUOUS",
         "reason": (

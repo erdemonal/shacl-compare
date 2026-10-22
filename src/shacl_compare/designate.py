@@ -64,8 +64,27 @@ def select_designated(
 
 
 def find_parent_node_shapes(shapes: Graph, property_shape: Node) -> list[Node]:
-    parents = list(shapes.subjects(SH.property, property_shape))
-    return sorted(parents, key=str)
+    return sorted(shapes.subjects(SH.property, property_shape), key=str)
+
+
+def _component_parameter(component: str) -> URIRef | None:
+    if component.endswith("MinCountConstraintComponent") or component == str(
+        SH.MinCountConstraintComponent
+    ):
+        return SH.minCount
+    if component.endswith("MaxCountConstraintComponent") or component == str(
+        SH.MaxCountConstraintComponent
+    ):
+        return SH.maxCount
+    return None
+
+
+def _shape_has_path(shapes: Graph, shape: Node, path: str) -> bool:
+    return path in {str(p) for p in shapes.objects(shape, SH.path)}
+
+
+def _parents_link(shapes: Graph, parent: Node, prop: Node) -> bool:
+    return (parent, SH.property, prop) in shapes
 
 
 def align_source_shape(
@@ -75,21 +94,43 @@ def align_source_shape(
     path: str,
     component: str,
 ) -> dict[str, Any]:
-    """Align baseline source_shape to a shape in shapes_after."""
     shape_uri = URIRef(source_shape)
-    present = any(shapes_after.triples((shape_uri, None, None))) or any(
-        shapes_after.triples((None, None, shape_uri))
-    )
-    if present:
+    param = _component_parameter(component)
+    baseline_parents = find_parent_node_shapes(shapes_baseline, shape_uri)
+
+    subject_defined = any(shapes_after.triples((shape_uri, None, None)))
+    if subject_defined:
+        if not _shape_has_path(shapes_after, shape_uri, path):
+            return {
+                "shape_alignment": "UNRESOLVED",
+                "aligned_source_shape": None,
+                "reason": "same_iri_present_but_path_mismatch_or_missing",
+            }
+        if baseline_parents:
+            linked = [
+                p
+                for p in baseline_parents
+                if any(shapes_after.triples((p, None, None)))
+                and _parents_link(shapes_after, p, shape_uri)
+            ]
+            if not linked:
+                return {
+                    "shape_alignment": "UNRESOLVED",
+                    "aligned_source_shape": None,
+                    "reason": "same_iri_present_but_parent_property_link_missing",
+                }
+        param_status = "NOT_APPLICABLE"
+        if param is not None:
+            vals = list(shapes_after.objects(shape_uri, param))
+            param_status = "PRESENT" if vals else "ABSENT"
         return {
             "shape_alignment": "ALIGNED",
             "aligned_source_shape": source_shape,
-            "reason": "same_iri_present_in_revised_shapes",
+            "reason": "same_iri_with_matching_path_and_parent_context",
+            "constraint_parameter_status": param_status,
         }
 
-    baseline_node = URIRef(source_shape)
-    parents = find_parent_node_shapes(shapes_baseline, baseline_node)
-    if not parents:
+    if not baseline_parents:
         return {
             "shape_alignment": "UNRESOLVED",
             "aligned_source_shape": None,
@@ -97,26 +138,25 @@ def align_source_shape(
         }
 
     candidates: list[str] = []
-    for parent in parents:
-        parent_iri = str(parent)
-        # Candidate property shapes under same parent IRI with same path.
-        after_parents = (
-            [URIRef(parent_iri)]
-            if any(True for _ in shapes_after.predicate_objects(URIRef(parent_iri)))
-            else []
-        )
-        for ap in after_parents:
-            for ps in shapes_after.objects(ap, SH.property):
-                paths = {str(p) for p in shapes_after.objects(ps, SH.path)}
-                if path in paths:
-                    candidates.append(str(ps))
+    for parent in baseline_parents:
+        if not any(shapes_after.triples((parent, None, None))):
+            continue
+        for ps in shapes_after.objects(parent, SH.property):
+            if _shape_has_path(shapes_after, ps, path):
+                candidates.append(str(ps))
 
     unique = sorted(set(candidates))
     if len(unique) == 1:
+        aligned = URIRef(unique[0])
+        param_status = "NOT_APPLICABLE"
+        if param is not None:
+            vals = list(shapes_after.objects(aligned, param))
+            param_status = "PRESENT" if vals else "ABSENT"
         return {
             "shape_alignment": "ALIGNED",
             "aligned_source_shape": unique[0],
             "reason": "unique_parent_path_fingerprint",
+            "constraint_parameter_status": param_status,
         }
     if len(unique) == 0:
         return {
@@ -141,12 +181,6 @@ def match_designated_after(
     component: str,
     severity: str,
 ) -> tuple[list[dict[str, Any]], str]:
-    """Return (matches, match_mode).
-
-    For blank focus keys, if the content key drifted (repair changed key
-    properties), fall back to a unique (path, source_shape, component, severity)
-    match among blank-keyed results. Multiple candidates → empty + ambiguous mode.
-    """
     direct = [
         r
         for r in results
@@ -161,21 +195,8 @@ def match_designated_after(
     ]
     if direct:
         return direct, "focus_key"
-    if not focus_key.startswith("bnode["):
-        return [], "focus_key"
-    soft = [
-        r
-        for r in results
-        if str(r.get("focus_key", "")).startswith("bnode[")
-        and str(r.get("result_path", "")) == path
-        and str(r.get("source_shape", "")) == source_shape
-        and str(r.get("source_constraint_component", "")) == component
-        and str(r.get("severity", "")) == severity
-    ]
-    if len(soft) == 1:
-        return soft, "blank_focus_unique_component_path"
-    if len(soft) > 1:
-        return [], "blank_focus_ambiguous"
+    if focus_key.startswith("bnode["):
+        return [], "blank_focus_key_unmatched"
     return [], "focus_key"
 
 
@@ -185,13 +206,30 @@ def original_cardinality_parameter(
     component: str,
 ) -> tuple[URIRef, list[str]] | None:
     shape = URIRef(source_shape)
-    if component.endswith("MinCountConstraintComponent"):
-        vals = sorted(str(v) for v in shapes.objects(shape, SH.minCount))
-        return SH.minCount, vals
-    if component.endswith("MaxCountConstraintComponent"):
-        vals = sorted(str(v) for v in shapes.objects(shape, SH.maxCount))
-        return SH.maxCount, vals
-    return None
+    param = _component_parameter(component)
+    if param is None:
+        return None
+    vals = sorted(str(v) for v in shapes.objects(shape, param))
+    return param, vals
+
+
+def _resolve_focus(
+    data: Graph,
+    focus_key: str,
+    focus_key_properties: list[URIRef],
+) -> tuple[Node | None, str | None]:
+    if not focus_key.startswith("bnode["):
+        return URIRef(focus_key), None
+    hits = [
+        s
+        for s in set(data.subjects())
+        if node_focus_key(data, s, focus_key_properties) == focus_key
+    ]
+    if len(hits) == 1:
+        return hits[0], None
+    if len(hits) == 0:
+        return None, "focus_node_not_found_in_data"
+    return None, "ambiguous_focus_key_multiple_nodes"
 
 
 def evaluate_original_cardinality_on_focus(
@@ -205,7 +243,6 @@ def evaluate_original_cardinality_on_focus(
     focus_key_properties: list[URIRef],
     targeted: bool,
 ) -> dict[str, Any]:
-    """Evaluate original minCount/maxCount on focus against baseline shapes encoding."""
     if not targeted:
         return {
             "original_constraint_evaluation": "NOT_EVALUATED",
@@ -228,12 +265,11 @@ def evaluate_original_cardinality_on_focus(
             "values": values,
         }
 
-    # Resolve focus node in data by key.
-    focus_node = _resolve_focus(data, focus_key, focus_key_properties)
+    focus_node, resolve_reason = _resolve_focus(data, focus_key, focus_key_properties)
     if focus_node is None:
         return {
             "original_constraint_evaluation": "NOT_EVALUATED",
-            "reason": "focus_node_not_found_in_data",
+            "reason": resolve_reason or "focus_node_not_found_in_data",
         }
 
     count = len(list(data.objects(focus_node, URIRef(path))))
@@ -249,16 +285,3 @@ def evaluate_original_cardinality_on_focus(
         "expected": expected,
         "observed_value_count": count,
     }
-
-
-def _resolve_focus(
-    data: Graph,
-    focus_key: str,
-    focus_key_properties: list[URIRef],
-) -> Node | None:
-    if not focus_key.startswith("bnode["):
-        return URIRef(focus_key)
-    for s in set(data.subjects()):
-        if node_focus_key(data, s, focus_key_properties) == focus_key:
-            return s
-    return None

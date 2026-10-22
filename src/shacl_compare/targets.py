@@ -11,10 +11,14 @@ from shacl_compare.terms import node_focus_key
 
 def node_shapes(shapes: Graph) -> list[Node]:
     found = set(shapes.subjects(RDF.type, SH.NodeShape))
-    # Also treat subjects of target predicates as node shapes.
     for pred in (SH.targetClass, SH.targetNode, SH.targetSubjectsOf, SH.targetObjectsOf):
         found.update(shapes.subjects(pred, None))
     return sorted(found, key=str)
+
+
+def find_owner_node_shapes(shapes: Graph, property_shape: str | Node) -> list[Node]:
+    ps = property_shape if isinstance(property_shape, Node) else URIRef(property_shape)
+    return sorted(shapes.subjects(SH.property, ps), key=str)
 
 
 def targets_for_shape(
@@ -66,15 +70,44 @@ def membership_for_focus(
     target_tables: list[dict[str, Any]],
     focus_key: str,
     source_shape: str | None,
+    shapes: Graph | None = None,
 ) -> dict[str, Any]:
-    """Return whether focus_key is targeted, preferring the source shape's parent when known."""
-    # source_shape in ValidationResult is often a property shape; membership is on node shapes.
-    matching = []
-    for table in target_tables:
-        if focus_key in table["members"]:
-            matching.append(table["shape"])
+    """Membership only under node shapes that own the designated property shape."""
+    if not source_shape or shapes is None:
+        return {
+            "targeted": False,
+            "owner_shapes": [],
+            "status": "NOT_EVALUATED",
+            "reason": "missing_source_shape_or_shapes_graph",
+        }
 
-    if not matching:
-        return {"targeted": False, "shapes": []}
+    owners = find_owner_node_shapes(shapes, source_shape)
+    if not owners:
+        # Property shape may itself be used as a standalone shape; treat it as owner.
+        if any(True for _ in shapes.predicate_objects(URIRef(source_shape))):
+            owners = [URIRef(source_shape)]
+        else:
+            return {
+                "targeted": False,
+                "owner_shapes": [],
+                "status": "NOT_EVALUATED",
+                "reason": "no_owner_node_shape_for_property_shape",
+            }
 
-    return {"targeted": True, "shapes": sorted(set(matching))}
+    owner_iris = {str(o) for o in owners}
+    matching_owners = [
+        table["shape"]
+        for table in target_tables
+        if table["shape"] in owner_iris and focus_key in table["members"]
+    ]
+    if matching_owners:
+        return {
+            "targeted": True,
+            "owner_shapes": sorted(set(matching_owners)),
+            "status": "IN_OWNER",
+        }
+    return {
+        "targeted": False,
+        "owner_shapes": sorted(owner_iris),
+        "status": "LOST_OR_NOT_IN_OWNER",
+    }

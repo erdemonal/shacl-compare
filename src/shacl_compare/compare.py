@@ -24,6 +24,7 @@ from shacl_compare.requirements import (
     load_requirement_card,
 )
 from shacl_compare.targets import all_targets, membership_for_focus
+from shacl_compare.terms import node_focus_key
 from shacl_compare.validation import run_validation, validator_meta
 
 
@@ -74,6 +75,26 @@ def _target_status(before: bool, after: bool) -> str:
     return "NOT_APPLICABLE"
 
 
+def _focus_key_resolvable(
+    data,
+    focus_key: str,
+    focus_key_properties: list[URIRef],
+) -> str:
+    """unique | missing | ambiguous | iri"""
+    if not focus_key.startswith("bnode["):
+        return "iri"
+    hits = [
+        s
+        for s in set(data.subjects())
+        if node_focus_key(data, s, focus_key_properties) == focus_key
+    ]
+    if len(hits) == 1:
+        return "unique"
+    if len(hits) == 0:
+        return "missing"
+    return "ambiguous"
+
+
 def _other_focus_rows(
     baseline_results: list[dict[str, Any]],
     after_results: list[dict[str, Any]],
@@ -82,6 +103,7 @@ def _other_focus_rows(
     path: str,
     component: str,
     severity: str,
+    source_shapes: set[str],
 ) -> list[dict[str, Any]]:
     def relevant(results: list[dict[str, Any]]) -> dict[str, bool]:
         out: dict[str, bool] = {}
@@ -90,6 +112,7 @@ def _other_focus_rows(
                 str(r.get("result_path", "")) == path
                 and str(r.get("source_constraint_component", "")) == component
                 and str(r.get("severity", "")) == severity
+                and str(r.get("source_shape", "")) in source_shapes
             ):
                 fk = str(r.get("focus_key", ""))
                 if fk and fk != designated_focus_key:
@@ -98,9 +121,8 @@ def _other_focus_rows(
 
     before = relevant(baseline_results)
     after = relevant(after_results)
-    keys = sorted(set(before) | set(after))
     rows = []
-    for fk in keys:
+    for fk in sorted(set(before) | set(after)):
         b = before.get(fk, False)
         a = after.get(fk, False)
         if b and a:
@@ -136,17 +158,14 @@ def _residuals_and_new(
     )
     before = {sig(r) for r in baseline_results}
     after = {sig(r) for r in after_results}
-    cleared = sorted(before - after)
-    new = sorted(after - before)
-    persisted = sorted(before & after)
 
     def drop_designated(items: list[tuple[str, ...]]) -> list[list[str]]:
         return [list(x) for x in items if x != d_sig]
 
     return {
-        "persisted": drop_designated(persisted),
-        "cleared": drop_designated(cleared),
-        "new": [list(x) for x in new if x != d_sig],
+        "persisted": drop_designated(sorted(before & after)),
+        "cleared": drop_designated(sorted(before - after)),
+        "new": [list(x) for x in sorted(after - before) if x != d_sig],
     }
 
 
@@ -186,8 +205,12 @@ def _analyse_branch(
             targets_after = all_targets(
                 data_after, shapes_after, focus_key_properties
             )
-            memb_b = membership_for_focus(targets_before, focus_key, source_shape)
-            memb_a = membership_for_focus(targets_after, focus_key, source_shape)
+            memb_b = membership_for_focus(
+                targets_before, focus_key, source_shape, shapes_baseline
+            )
+            memb_a = membership_for_focus(
+                targets_after, focus_key, source_shape, shapes_baseline
+            )
             return {
                 "label": label,
                 "conforms": after_validation["conforms"],
@@ -233,10 +256,18 @@ def _analyse_branch(
             severity=severity,
         )
 
-    if match_mode == "blank_focus_ambiguous":
-        result_outcome = "NOT_COMPARABLE"
-    elif matches:
+    if matches:
         result_outcome = "PERSIST"
+    elif match_mode == "blank_focus_key_unmatched":
+        resolvable = _focus_key_resolvable(
+            data_after, focus_key, focus_key_properties
+        )
+        if resolvable == "unique":
+            result_outcome = "CLEAR"
+            match_mode = "blank_focus_key_absent_vr_identity_ok"
+        else:
+            result_outcome = "NOT_COMPARABLE"
+            match_mode = f"blank_focus_key_unmatched_{resolvable}"
     else:
         result_outcome = "CLEAR"
 
@@ -244,13 +275,19 @@ def _analyse_branch(
         data_for_original, shapes_baseline, focus_key_properties
     )
     targets_after = all_targets(data_after, shapes_after, focus_key_properties)
-    memb_b = membership_for_focus(targets_before, focus_key, source_shape)
-    memb_a = membership_for_focus(targets_after, focus_key, source_shape)
+    memb_b = membership_for_focus(
+        targets_before, focus_key, source_shape, shapes_baseline
+    )
+    if is_revision:
+        memb_a = membership_for_focus(
+            targets_after, focus_key, match_shape, shapes_after
+        )
+    else:
+        memb_a = membership_for_focus(
+            targets_after, focus_key, source_shape, shapes_baseline
+        )
     target_membership = _target_status(memb_b["targeted"], memb_a["targeted"])
 
-    # A: evaluate GA against S0 encoding if still targeted under S0 after A.
-    # B: evaluate G0 against S0 encoding if still targeted under S0 (revision does not
-    #    imply original constraint satisfaction).
     if not is_revision:
         original = evaluate_original_cardinality_on_focus(
             data_after,
@@ -274,6 +311,10 @@ def _analyse_branch(
             targeted=memb_b["targeted"],
         )
 
+    other_shapes = {source_shape}
+    if match_shape:
+        other_shapes.add(match_shape)
+
     return {
         "label": label,
         "conforms": after_validation["conforms"],
@@ -293,6 +334,7 @@ def _analyse_branch(
             path=path,
             component=component,
             severity=severity,
+            source_shapes=other_shapes,
         ),
         "residual_results": _residuals_and_new(
             baseline_results, after_validation["results"], designated
@@ -312,7 +354,6 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
     after_a = run_validation(ga, s0, focus_key_properties)
     after_b = run_validation(g0, sb, focus_key_properties)
 
-    # Resolve focus_key: CLI --focus may be IRI or precomputed bnode key.
     focus_key = cfg.focus
     try:
         designated_row = select_designated(
@@ -324,7 +365,6 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
             severity=cfg.severity,
         )
     except DesignateError:
-        # Allow --focus as raw focus_node IRI while results store content keys.
         alt_keys = {
             r.get("focus_key")
             for r in baseline["results"]
@@ -412,6 +452,12 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
         undetermined.append(
             "whether_B_clearance_reflects_constraint_satisfaction_or_target_loss"
         )
+    for branch, name in (
+        (intervention_a, "A"),
+        (intervention_b, "B"),
+    ):
+        if branch["result_outcome"] == "NOT_COMPARABLE":
+            undetermined.append(f"designated_result_identity_{name}")
 
     noop_warnings = []
     if data_diff.get("unchanged") is True:
@@ -421,7 +467,7 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
 
     parents = find_parent_node_shapes(s0, URIRef(cfg.source_shape))
 
-    report: dict[str, Any] = {
+    return {
         "meta": {
             "tool": "shacl-compare",
             "version": __version__,
@@ -478,4 +524,3 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
         "requirement_card": requirement_section,
         "undetermined": undetermined,
     }
-    return report
