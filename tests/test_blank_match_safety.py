@@ -33,24 +33,12 @@ def test_resolve_focus_ambiguous_duplicate_content_keys():
     g = Graph()
     p = URIRef("http://example.org/label")
     a, b = BNode(), BNode()
-    for node, val in ((a, "same"), (b, "same")):
+    for node in (a, b):
         g.add((node, RDF.type, URIRef("http://example.org/Item")))
-        g.add((node, p, Literal(val)))
+        g.add((node, p, Literal("same")))
     key = node_focus_key(g, a, [p])
     assert node_focus_key(g, b, [p]) == key
 
-    result = evaluate_original_cardinality_on_focus(
-        g,
-        Graph(),
-        focus_key=key,
-        path=str(p),
-        source_shape="http://example.org/Shape",
-        component=str(SH.MaxCountConstraintComponent),
-        focus_key_properties=[p],
-        targeted=True,
-    )
-    # shapes graph empty → parameter missing; first ensure resolve path is safe:
-    # re-call with a shapes graph that has maxCount so resolution is exercised.
     shapes = Graph()
     shape = URIRef("http://example.org/Shape")
     shapes.add((shape, SH.maxCount, Literal(1)))

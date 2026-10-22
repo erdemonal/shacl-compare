@@ -1,0 +1,14 @@
+@prefix ex: <http://example.org/iot#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:SensorShape
+  a sh:NodeShape ;
+  sh:targetClass ex:Sensor ;
+  sh:property ex:SensorShape-reading .
+
+ex:SensorShape-reading
+  a sh:PropertyShape ;
+  sh:path ex:reading ;
+  sh:datatype xsd:string ;
+  sh:minCount 1 .

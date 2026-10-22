@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import sys
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from rdflib import URIRef
+from rdflib import BNode, URIRef
+from rdflib.namespace import SH
 
 from shacl_compare import __version__
 from shacl_compare.designate import (
@@ -135,37 +137,89 @@ def _other_focus_rows(
     return rows
 
 
-def _residuals_and_new(
-    baseline_results: list[dict[str, Any]],
-    after_results: list[dict[str, Any]],
-    designated: dict[str, str],
-) -> dict[str, Any]:
-    def sig(r: dict[str, Any]) -> tuple[str, ...]:
-        return (
-            str(r.get("focus_key", "")),
-            str(r.get("result_path", "")),
-            str(r.get("source_shape", "")),
-            str(r.get("source_constraint_component", "")),
-            str(r.get("severity", "")),
-        )
+def _result_signature(r: dict[str, Any]) -> tuple[str, ...]:
+    value = r.get("value", "")
+    if isinstance(value, list):
+        value = "|".join(sorted(str(v) for v in value))
+    return (
+        str(r.get("focus_key", "")),
+        str(r.get("result_path", "")),
+        str(r.get("source_shape", "")),
+        str(r.get("source_constraint_component", "")),
+        str(r.get("severity", "")),
+        str(value),
+    )
 
-    d_sig = (
+
+def _is_designated_signature(sig: tuple[str, ...], designated: dict[str, str]) -> bool:
+    return sig[:5] == (
         designated["focus_key"],
         designated["result_path"],
         designated["source_shape"],
         designated["source_constraint_component"],
         designated["severity"],
     )
-    before = {sig(r) for r in baseline_results}
-    after = {sig(r) for r in after_results}
 
-    def drop_designated(items: list[tuple[str, ...]]) -> list[list[str]]:
-        return [list(x) for x in items if x != d_sig]
 
+def _residuals_and_new(
+    baseline_results: list[dict[str, Any]],
+    after_results: list[dict[str, Any]],
+    designated: dict[str, str],
+) -> dict[str, Any]:
+    before = Counter(_result_signature(r) for r in baseline_results)
+    after = Counter(_result_signature(r) for r in after_results)
+    persisted: list[dict[str, Any]] = []
+    cleared: list[dict[str, Any]] = []
+    new: list[dict[str, Any]] = []
+    for sig in sorted(set(before) | set(after)):
+        if _is_designated_signature(sig, designated):
+            continue
+        b = before[sig]
+        a = after[sig]
+        row = {"signature": list(sig), "baseline_count": b, "after_count": a}
+        if b and a:
+            persisted.append(row)
+            if a < b:
+                cleared.append(
+                    {
+                        "signature": list(sig),
+                        "baseline_count": b,
+                        "after_count": a,
+                        "cleared_count": b - a,
+                    }
+                )
+            elif a > b:
+                new.append(
+                    {
+                        "signature": list(sig),
+                        "baseline_count": b,
+                        "after_count": a,
+                        "new_count": a - b,
+                    }
+                )
+        elif b and not a:
+            cleared.append(
+                {
+                    "signature": list(sig),
+                    "baseline_count": b,
+                    "after_count": 0,
+                    "cleared_count": b,
+                }
+            )
+        else:
+            new.append(
+                {
+                    "signature": list(sig),
+                    "baseline_count": 0,
+                    "after_count": a,
+                    "new_count": a,
+                }
+            )
     return {
-        "persisted": drop_designated(sorted(before & after)),
-        "cleared": drop_designated(sorted(before - after)),
-        "new": [list(x) for x in sorted(after - before) if x != d_sig],
+        "persisted": persisted,
+        "cleared": cleared,
+        "new": new,
+        "signature_includes_value": True,
     }
 
 
@@ -342,6 +396,24 @@ def _analyse_branch(
     }
 
 
+def _unsupported_construct_flags(s0, sb, path: str) -> list[str]:
+    flags: list[str] = []
+    if not (
+        path.startswith("http://")
+        or path.startswith("https://")
+        or path.startswith("urn:")
+    ):
+        flags.append("designated_path_not_absolute_iri_predicate_path")
+    for label, g in (("baseline", s0), ("revision", sb)):
+        if any(True for _ in g.triples((None, SH.sparql, None))):
+            flags.append(f"shapes_contain_sh_sparql_{label}")
+        for obj in g.objects(None, SH.path):
+            if isinstance(obj, BNode):
+                flags.append(f"shapes_contain_non_iri_path_{label}")
+                break
+    return sorted(set(flags))
+
+
 def run_compare(cfg: CompareConfig) -> dict[str, Any]:
     focus_key_properties = _focus_props(cfg.focus_key_properties)
 
@@ -459,6 +531,14 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
         if branch["result_outcome"] == "NOT_COMPARABLE":
             undetermined.append(f"designated_result_identity_{name}")
 
+    unsupported = _unsupported_construct_flags(s0, sb, cfg.path)
+    undetermined.extend(unsupported)
+
+    if designated["focus_key"].startswith("bnode["):
+        undetermined.append(
+            "blank_focus_identity_depends_on_stable_content_key_properties"
+        )
+
     noop_warnings = []
     if data_diff.get("unchanged") is True:
         noop_warnings.append("data_repair_is_noop_relative_to_baseline_data")
@@ -475,7 +555,12 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
             "python": sys.version.split()[0],
             "rdflib_version": __import__("rdflib").__version__,
             "validator": validator_meta(),
-            "diff_iso_size_bound": MAX_TRIPLES_FOR_ISO,
+            "diff_iso_size_bound": {
+                "max_combined_triples": MAX_TRIPLES_FOR_ISO,
+                "role": "provisional_performance_safeguard",
+                "not_a_benchmarked_threshold": True,
+                "no_wall_clock_limit": True,
+            },
             "interface": {
                 "A_validates_with": "S0",
                 "B_validates_with": "G0",
@@ -484,6 +569,12 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
                     "this is not an independent off-interface purity audit."
                 ),
             },
+            "supported_scope_note": (
+                "Detailed comparison is reliable for SHACL Core property shapes with "
+                "IRI PredicatePaths and targetClass/targetNode/targetSubjectsOf/"
+                "targetObjectsOf. Other constructs may validate in pySHACL but are "
+                "not fully tracked by this comparator."
+            ),
         },
         "inputs": {
             "data_baseline": str(cfg.data_baseline),
