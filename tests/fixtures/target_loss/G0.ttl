@@ -1,0 +1,6 @@
+@prefix ex: <http://example.org/ns#> .
+
+ex:Node1
+  a ex:Person ;
+  ex:firstName "a" ;
+  ex:firstName "b" .

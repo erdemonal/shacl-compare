@@ -1,0 +1,41 @@
+# Local environments
+.venv/
+venv/
+env/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+shacl_compare.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Generated reports and local scratch
+reports/
+*.report.json
+.out/
+.tmp/
+
+# Local notes and agent scratch (untracked only)
+notes/
+scratch/
+*.local.md
+AGENT*.md
+PLAN*.md
+STATUS*.md
+research-notes/
+
+# Editor / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
