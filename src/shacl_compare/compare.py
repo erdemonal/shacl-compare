@@ -571,9 +571,11 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
             },
             "supported_scope_note": (
                 "Detailed comparison is reliable for SHACL Core property shapes with "
-                "IRI PredicatePaths and targetClass/targetNode/targetSubjectsOf/"
-                "targetObjectsOf. Other constructs may validate in pySHACL but are "
-                "not fully tracked by this comparator."
+                "IRI PredicatePaths and targetClass (SHACL instances via "
+                "rdf:type/rdfs:subClassOf* in the data graph), implicit class targets "
+                "(SHACL 1.0), targetNode/targetSubjectsOf/targetObjectsOf. Other "
+                "constructs may validate in pySHACL but are not fully tracked by this "
+                "comparator."
             ),
         },
         "inputs": {
