@@ -47,18 +47,18 @@
       "SB": "Change designated property shape sh:minCount 1 -> 0"
     },
     "reconstruction": "clean_checkout_fetch_and_construct",
-    "historical_snapshot_note": "Original packaging snapshot S0/SB were rdflib round-trips of upstream shapes (incidental owl:Class/DatatypeProperty subclass axioms; SB was a 1-char minCount edit of that snapshot). Clean reconstruction uses verbatim upstream S0 + the same 1-char SB edit. G0/GA bytes match the historical evaluation inputs. Outcomes unchanged.",
-    "source_txt": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/fixtures/c_eval_v01/SOURCE.txt"
+    "historical_snapshot_note": "Original packaging snapshot S0/SB were rdflib round-trips of upstream shapes (incidental owl:Class/DatatypeProperty subclass axioms; SB was a 1-char minCount edit of that snapshot). Clean reconstruction uses verbatim upstream S0 + the same 1-char SB edit. G0/GA bytes match the historical evaluation inputs. Outcomes unchanged."
   },
   "historical_outcomes": {
     "A_outcome": "CLEAR",
     "B_outcome": "CLEAR",
     "A_original": "SATISFIED",
     "B_original": "VIOLATED",
-    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/reports/five_experiments/c_eval_v01.json",
     "tool_version": "0.1.0",
     "preserved": true,
-    "not_rewritten": true
+    "not_rewritten": true,
+    "historical_report_id": "c_eval_v01",
+    "historical_report_note": "Original comparison report was a local packaging artefact and is not redistributed in this repository."
   },
   "current_expected": {
     "A_outcome": "CLEAR",

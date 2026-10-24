@@ -56,10 +56,11 @@
     "B_outcome": "CLEAR",
     "A_original": "SATISFIED",
     "B_original": "VIOLATED",
-    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v6_dcat_ap_lu_title_new/report.json",
     "tool_version": "0.1.0",
     "preserved": true,
-    "not_rewritten": true
+    "not_rewritten": true,
+    "historical_report_id": "report",
+    "historical_report_note": "Original comparison report was a local packaging artefact and is not redistributed in this repository."
   },
   "current_expected": {
     "A_outcome": "CLEAR",

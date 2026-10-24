@@ -77,33 +77,40 @@ def test_blank_focus_without_data_graph_not_evaluated():
     assert result["reason"] == "blank_focus_requires_data_graph_for_identity"
 
 def test_geodcat_rights_case_when_available(tmp_path: Path):
-    sr = Path(
-        "/home/erdem/Documents/GitHub/shacl-resources/experiments/"
-        "repair-vs-revision-pilot/outputs/c_eval_v02"
-    )
-    hist = Path(
-        "/home/erdem/Documents/GitHub/shacl-compare/reports/five_experiments/"
-        "c_eval_v02.json"
-    )
-    if not (sr / "baseline_data.ttl").is_file() or not hist.is_file():
-        import pytest
-
-        pytest.skip("c_eval_v02 local artifacts not available")
-
     import json
+    import subprocess
+    import sys
 
-    des = json.loads(hist.read_text())["designated"]
+    root = Path(__file__).resolve().parents[1]
+    pkg = root / "evaluations"
+    case = pkg / "cases" / "05_dcat_ap_rights"
+    meta = json.loads((case / "case.json").read_text(encoding="utf-8"))
+    gdir = pkg / ".workdir" / meta["id"] / "graphs"
+    if not all((gdir / f"{r}.ttl").is_file() for r in ("G0", "S0", "GA", "SB")):
+        prep = subprocess.run(
+            [sys.executable, str(pkg / "prepare_evaluations.py")],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if prep.returncode != 0:
+            import pytest
+
+            pytest.skip(f"evaluation graphs unavailable: {prep.stderr or prep.stdout}")
+
+    des = meta["designated"]
     report = run_compare(
         CompareConfig(
-            data_baseline=sr / "baseline_data.ttl",
-            shapes_baseline=sr / "baseline_shapes.ttl",
-            data_repair=sr / "after_data_repair_data.ttl",
-            shapes_revision=sr / "after_constraint_revision_shapes.ttl",
-            focus=des["focus_key"],
-            path=des["result_path"],
-            source_shape=des["source_shape"],
-            component=des["source_constraint_component"],
-            severity=des["severity"],
+            data_baseline=gdir / "G0.ttl",
+            shapes_baseline=gdir / "S0.ttl",
+            data_repair=gdir / "GA.ttl",
+            shapes_revision=gdir / "SB.ttl",
+            focus=des["focus"],
+            path=des["path"],
+            source_shape=des.get("source_shape"),
+            component=des["component"],
+            severity=des.get("severity"),
             focus_key_properties=[],
             requirement_card=None,
             out=tmp_path / "out.json",

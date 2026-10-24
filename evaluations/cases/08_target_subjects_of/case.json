@@ -13,23 +13,19 @@
   "files": {
     "G0": {
       "sha256": "9ef1a09009b3cc98364c0fcd3e9d039c268922d7e5877f4642cd36eef7de0ba7",
-      "bytes": 264,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/G0.ttl"
+      "bytes": 264
     },
     "S0": {
       "sha256": "0ca719511111b7748d6012eefebf6ff49c999012e81459f4b7749733155286e0",
-      "bytes": 390,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/S0.ttl"
+      "bytes": 390
     },
     "GA": {
       "sha256": "abfffaa722a42829056d5c1ccff7679c0d2ba9d13f997af28d9cffc11850dc8d",
-      "bytes": 251,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/GA.ttl"
+      "bytes": 251
     },
     "SB": {
       "sha256": "549a9e03c164aa2e3910e67b4b4d244f36d122d9643342e538ea39d99957a5fc",
-      "bytes": 390,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/SB.ttl"
+      "bytes": 390
     }
   },
   "provenance": {
@@ -41,23 +37,18 @@
       "G0/S0 split",
       "GA delete myProperty B",
       "SB maxCount 1->2"
-    ],
-    "local_recovery_paths": {
-      "G0": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/G0.ttl",
-      "S0": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/S0.ttl",
-      "GA": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/GA.ttl",
-      "SB": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/SB.ttl"
-    }
+    ]
   },
   "historical_outcomes": {
     "A_outcome": "CLEAR",
     "B_outcome": "CLEAR",
     "A_original": "SATISFIED",
     "B_original": "VIOLATED",
-    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/reports_final_review/v5.json",
     "tool_version": "0.1.0",
     "preserved": true,
-    "not_rewritten": true
+    "not_rewritten": true,
+    "historical_report_id": "v5",
+    "historical_report_note": "Original comparison report was a local packaging artefact and is not redistributed in this repository."
   },
   "current_expected": {
     "A_outcome": "CLEAR",

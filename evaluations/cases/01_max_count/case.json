@@ -12,24 +12,20 @@
   },
   "files": {
     "G0": {
-      "sha256": "d5f50b6db1789742aa5fd700ba7ff4ce98e79a2541e111cd1da615ae5877a61f",
-      "bytes": 2299,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/baseline_combined.ttl"
+      "sha256": "379b7b639047a6a6a15d00e9721f631a4cf603aaf57ae6017778f4f4355d35ab",
+      "bytes": 2092
     },
     "S0": {
-      "sha256": "d5f50b6db1789742aa5fd700ba7ff4ce98e79a2541e111cd1da615ae5877a61f",
-      "bytes": 2299,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/baseline_combined.ttl"
+      "sha256": "379b7b639047a6a6a15d00e9721f631a4cf603aaf57ae6017778f4f4355d35ab",
+      "bytes": 2092
     },
     "GA": {
-      "sha256": "443f3121b0e366e3dca067dd9afbd3576aaefb5a0a848156906b564790894176",
-      "bytes": 2281,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/after_data_repair_data.ttl"
+      "sha256": "72838af1d5d3eccdf2b2534750ab5f49d1560ed9121b724b0ef0dec39545e667",
+      "bytes": 2074
     },
     "SB": {
-      "sha256": "e57274b2637113b201b002bf0ee1d6caadc302b06bcd35e923bb19a1d87b10c6",
-      "bytes": 2299,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/after_constraint_revision_shapes.ttl"
+      "sha256": "a43f7973e1f477f8b41880009ecb0c116e426ad578f3685061fb34d87997b4b7",
+      "bytes": 2092
     }
   },
   "provenance": {
@@ -37,11 +33,10 @@
     "fixture_note": "Combined baseline document split/used as G0=S0; GA/SB evaluator-created for pilot.",
     "interventions_by": "evaluator",
     "interventions_not_upstream_maintainer": true,
-    "local_recovery_paths": {
-      "G0": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/baseline_combined.ttl",
-      "S0": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/baseline_combined.ttl",
-      "GA": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/after_data_repair_data.ttl",
-      "SB": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/after_constraint_revision_shapes.ttl"
+    "graph_iri_normalization": "Manifest/Validate IRIs rewritten from packaging-time absolute file:// paths (local fixture basename maxCount-001) to portable datashapes.org HTTP IRIs. SHACL shapes, paths, focus nodes, and constraint parameters were unchanged. Outcomes verified identical after rewrite.",
+    "graph_iri_normalization_map": {
+      "file://\u2026/fixtures/maxCount-001": "http://datashapes.org/sh/tests/core/property/maxCount-001.test",
+      "file://\u2026/fixtures/maxCount-001.ttl": "http://datashapes.org/sh/tests/core/property/maxCount-001.test#manifest-graph"
     }
   },
   "historical_outcomes": {
@@ -49,10 +44,11 @@
     "B_outcome": "CLEAR",
     "A_original": "SATISFIED",
     "B_original": "VIOLATED",
-    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/reports/five_experiments/pilot1_maxcount.json",
     "tool_version": "0.1.0",
     "preserved": true,
-    "not_rewritten": true
+    "not_rewritten": true,
+    "historical_report_id": "pilot1_maxcount",
+    "historical_report_note": "Original comparison report was a local packaging artefact and is not redistributed in this repository."
   },
   "current_expected": {
     "A_outcome": "CLEAR",

@@ -13,23 +13,19 @@
   "files": {
     "G0": {
       "sha256": "ff29f6493403d891d7efff1e118fb85fba846e501fdd12fc7b82035eea63efed",
-      "bytes": 480,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/G0.ttl"
+      "bytes": 480
     },
     "S0": {
       "sha256": "5a0708ca61600f437a6a68e7d49eacf5076e7aa0ceac1533ed1b9109e27f80b9",
-      "bytes": 495,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/S0.ttl"
+      "bytes": 495
     },
     "GA": {
       "sha256": "ca9d1125ee7e570c791dccd5c570e72a7ec670899a503f7dd8f3d95f8204b4bf",
-      "bytes": 496,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/GA.ttl"
+      "bytes": 496
     },
     "SB": {
       "sha256": "be8856f8049c22c24dc2e7ed236cc2d89295cc361c96bcd7da41bedb9d3f6413",
-      "bytes": 470,
-      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/SB.ttl"
+      "bytes": 470
     }
   },
   "provenance": {
@@ -42,23 +38,18 @@
       "G0/S0 split",
       "GA add gender male",
       "SB remove sh:hasValue male"
-    ],
-    "local_recovery_paths": {
-      "G0": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/G0.ttl",
-      "S0": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/S0.ttl",
-      "GA": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/GA.ttl",
-      "SB": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/SB.ttl"
-    }
+    ]
   },
   "historical_outcomes": {
     "A_outcome": "CLEAR",
     "B_outcome": "CLEAR",
     "A_original": "NOT_EVALUATED",
     "B_original": "NOT_EVALUATED",
-    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/reports_final_review/v2.json",
     "tool_version": "0.1.0",
     "preserved": true,
-    "not_rewritten": true
+    "not_rewritten": true,
+    "historical_report_id": "v2",
+    "historical_report_note": "Original comparison report was a local packaging artefact and is not redistributed in this repository."
   },
   "current_expected": {
     "A_outcome": "CLEAR",

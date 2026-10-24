@@ -20,10 +20,10 @@ owl:Class rdfs:subClassOf rdfs:Class .
 
 owl:DatatypeProperty rdfs:subClassOf rdf:Property .
 
-<file:///home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/fixtures/maxCount-001> a sht:Validate ;
+<http://datashapes.org/sh/tests/core/property/maxCount-001.test> a sht:Validate ;
     rdfs:label "Test of sh:maxCount at property shape 001" ;
-    mf:action [ sht:dataGraph <file:///home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/fixtures/maxCount-001.ttl> ;
-            sht:shapesGraph <file:///home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/fixtures/maxCount-001.ttl> ] ;
+    mf:action [ sht:dataGraph <http://datashapes.org/sh/tests/core/property/maxCount-001.test#manifest-graph> ;
+            sht:shapesGraph <http://datashapes.org/sh/tests/core/property/maxCount-001.test#manifest-graph> ] ;
     mf:result [ a sh:ValidationReport ;
             sh:conforms false ;
             sh:result [ a sh:ValidationResult ;
@@ -43,8 +43,8 @@ ex:ValidResource a ex:Person ;
     rdfs:label "Valid resource" ;
     ex:firstName "John" .
 
-<file:///home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/fixtures/maxCount-001.ttl> a mf:Manifest ;
-    mf:entries ( <file:///home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/fixtures/maxCount-001> ) .
+<http://datashapes.org/sh/tests/core/property/maxCount-001.test#manifest-graph> a mf:Manifest ;
+    mf:entries ( <http://datashapes.org/sh/tests/core/property/maxCount-001.test> ) .
 
 ex:PersonShape-firstName sh:datatype xsd:string ;
     sh:maxCount 2 ;

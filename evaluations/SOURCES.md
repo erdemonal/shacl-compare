@@ -37,3 +37,10 @@ When redistributing SEMIC CC-BY-4.0 materials, retain upstream copyright notices
 `prepare_evaluations.py` performs pinned HTTPS retrieval + checksum verification and writes graphs to `.workdir/` (gitignored). SHA-256 values in `case.json` / `checksums.sha256` validate the reconstructed evaluation inputs.
 
 Do not claim evaluator-created repairs/revisions were made by upstream projects.
+
+## Graph IRI normalization
+
+In cases 01 and 02, local `file://` IRIs used for W3C test-manifest metadata were
+replaced with portable IRIs under `http://datashapes.org/sh/tests/`. The changes do
+not affect the SHACL constraints or designated focus nodes. The original and revised
+identifiers are recorded in each case's provenance metadata.
