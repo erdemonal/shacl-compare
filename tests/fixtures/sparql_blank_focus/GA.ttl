@@ -1,0 +1,4 @@
+@prefix ex: <http://example.org/sparql#> .
+
+_:dist a ex:Distribution ;
+  ex:rights "ok" .

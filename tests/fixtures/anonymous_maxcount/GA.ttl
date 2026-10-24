@@ -1,0 +1,4 @@
+@prefix ex: <http://example.org/anon#> .
+
+ex:Item1 a ex:Item ;
+  ex:code "A" .

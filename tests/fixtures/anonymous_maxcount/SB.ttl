@@ -1,0 +1,11 @@
+@prefix ex: <http://example.org/anon#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:ItemShape a sh:NodeShape ;
+  sh:targetClass ex:Item ;
+  sh:property [
+    sh:path ex:code ;
+    sh:datatype xsd:string ;
+    sh:maxCount 2
+  ] .

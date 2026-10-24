@@ -1,0 +1,3 @@
+@prefix ex: <http://example.org/ambig#> .
+
+ex:N ex:p "one", "two" .

@@ -1,0 +1,13 @@
+@prefix ex: <http://example.org/ambig#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+ex:Shape a sh:NodeShape ;
+  sh:targetNode ex:N ;
+  sh:property [
+    sh:path ex:p ;
+    sh:maxCount 1
+  ] ;
+  sh:property [
+    sh:path ex:p ;
+    sh:maxCount 1
+  ] .

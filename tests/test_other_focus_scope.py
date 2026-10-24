@@ -1,6 +1,5 @@
 from shacl_compare.compare import _other_focus_rows
 
-
 def test_other_focus_ignores_unrelated_source_shape():
     path = "http://example.org/firstName"
     component = "http://www.w3.org/ns/shacl#MinCountConstraintComponent"

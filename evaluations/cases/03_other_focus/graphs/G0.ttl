@@ -1,0 +1,26 @@
+@prefix ex: <http://org.shacl.repairs.tests/other-focus-minCount#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:PersonShape a sh:NodeShape ;
+    sh:property ex:PersonShape-firstName ;
+    sh:targetNode ex:PersonA,
+        ex:PersonB .
+
+owl:Class rdfs:subClassOf rdfs:Class .
+
+owl:DatatypeProperty rdfs:subClassOf rdf:Property .
+
+ex:PersonA rdfs:label "F0 primary focus" ;
+    ex:firstName "Alice-baseline" .
+
+ex:PersonB rdfs:label "F1 other focus" ;
+    ex:firstName "Bob-baseline" .
+
+ex:PersonShape-firstName sh:datatype xsd:string ;
+    sh:minCount 2 ;
+    sh:path ex:firstName .
+

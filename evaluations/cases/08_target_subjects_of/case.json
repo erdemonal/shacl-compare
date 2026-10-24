@@ -1,0 +1,71 @@
+{
+  "id": "08_target_subjects_of",
+  "inventory_name": "V5_targetSubjectsOf",
+  "redistribution": "copy",
+  "license_note": "W3C Software and Document License + evaluator interventions",
+  "designated": {
+    "focus": "http://datashapes.org/sh/tests/core/targets/targetSubjectsOf-001.test#InvalidInstance1",
+    "path": "http://datashapes.org/sh/tests/core/targets/targetSubjectsOf-001.test#myProperty",
+    "source_shape": "http://datashapes.org/sh/tests/core/targets/targetSubjectsOf-001.test#TestShape-myProperty",
+    "component": "http://www.w3.org/ns/shacl#MaxCountConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "files": {
+    "G0": {
+      "sha256": "9ef1a09009b3cc98364c0fcd3e9d039c268922d7e5877f4642cd36eef7de0ba7",
+      "bytes": 264,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/G0.ttl"
+    },
+    "S0": {
+      "sha256": "0ca719511111b7748d6012eefebf6ff49c999012e81459f4b7749733155286e0",
+      "bytes": 390,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/S0.ttl"
+    },
+    "GA": {
+      "sha256": "abfffaa722a42829056d5c1ccff7679c0d2ba9d13f997af28d9cffc11850dc8d",
+      "bytes": 251,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/GA.ttl"
+    },
+    "SB": {
+      "sha256": "549a9e03c164aa2e3910e67b4b4d244f36d122d9643342e538ea39d99957a5fc",
+      "bytes": 390,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/SB.ttl"
+    }
+  },
+  "provenance": {
+    "w3c_relative_path": "data-shapes-test-suite/tests/core/targets/targetSubjectsOf-001.ttl",
+    "source_commit_sha_local_clone": "8ca23f24d08e2cd364204f4b85ecf5bf15175720",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "evaluator_constructed": [
+      "G0/S0 split",
+      "GA delete myProperty B",
+      "SB maxCount 1->2"
+    ],
+    "local_recovery_paths": {
+      "G0": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/G0.ttl",
+      "S0": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/S0.ttl",
+      "GA": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/GA.ttl",
+      "SB": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v5_targetSubjectsOf/SB.ttl"
+    }
+  },
+  "historical_outcomes": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED",
+    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/reports_final_review/v5.json",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true
+  },
+  "current_expected": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED"
+  },
+  "historical_vs_current_deltas": [],
+  "delta_interpretation": "Current matches historical core outcomes.",
+  "historical_id": "08_V5_targetSubjectsOf"
+}

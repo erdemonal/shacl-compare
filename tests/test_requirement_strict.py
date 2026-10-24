@@ -10,9 +10,7 @@ from shacl_compare.requirements import (
     load_requirement_card,
 )
 
-
 EX = URIRef("http://example.org/ns#")
-
 
 def test_rejects_negative_expected_value(tmp_path: Path):
     card = tmp_path / "card.json"
@@ -29,7 +27,6 @@ def test_rejects_negative_expected_value(tmp_path: Path):
     with pytest.raises(ValueError, match="non-negative"):
         load_requirement_card(card)
 
-
 def test_rejects_bool_expected_value(tmp_path: Path):
     card = tmp_path / "card.json"
     card.write_text(
@@ -44,7 +41,6 @@ def test_rejects_bool_expected_value(tmp_path: Path):
     )
     with pytest.raises(ValueError):
         load_requirement_card(card)
-
 
 def test_no_path_on_shape_without_unique_property_is_not_held():
     shapes = Graph()
@@ -61,7 +57,6 @@ def test_no_path_on_shape_without_unique_property_is_not_held():
     result = assess_cardinality_condition(shapes, card)
     assert result["status"] == "NOT_COMPARABLE"
     assert result["status"] != "CONDITION_HELD"
-
 
 def test_property_shape_path_must_match():
     shapes = Graph()

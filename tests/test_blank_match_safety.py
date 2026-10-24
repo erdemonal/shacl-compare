@@ -7,7 +7,6 @@ from shacl_compare.designate import (
 )
 from shacl_compare.terms import node_focus_key
 
-
 def test_no_soft_match_to_different_blank_focus():
     baseline_key = "bnode[type=http://example.org/Item|http://example.org/label=a,b]"
     other = {
@@ -28,7 +27,6 @@ def test_no_soft_match_to_different_blank_focus():
     assert matches == []
     assert mode == "blank_focus_key_unmatched"
 
-
 def test_resolve_focus_ambiguous_duplicate_content_keys():
     g = Graph()
     p = URIRef("http://example.org/label")
@@ -41,6 +39,7 @@ def test_resolve_focus_ambiguous_duplicate_content_keys():
 
     shapes = Graph()
     shape = URIRef("http://example.org/Shape")
+    shapes.add((shape, SH.path, p))
     shapes.add((shape, SH.maxCount, Literal(1)))
     result = evaluate_original_cardinality_on_focus(
         g,

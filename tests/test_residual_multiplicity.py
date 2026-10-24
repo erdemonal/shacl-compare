@@ -1,6 +1,5 @@
 from shacl_compare.compare import _residuals_and_new
 
-
 def test_duplicate_signatures_preserve_distinct_values():
     designated = {
         "focus_key": "http://example.org/Sensor1",
@@ -52,7 +51,6 @@ def test_duplicate_signatures_preserve_distinct_values():
     assert "cold" in cleared_vals
     assert "hot" in persisted_vals
     assert residual["signature_includes_value"] is True
-
 
 def test_identical_value_duplicates_use_counts():
     designated = {

@@ -1,0 +1,19 @@
+@prefix ex: <http://example.org/sparql#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:PersonShape a sh:NodeShape ;
+  sh:targetClass ex:Person ;
+  sh:property ex:PersonShape-code ;
+  sh:sparql [
+    sh:message "need email" ;
+    sh:select """
+      SELECT $this WHERE {
+        FILTER NOT EXISTS { $this <http://example.org/sparql#email> ?e }
+      }
+    """
+  ] .
+
+ex:PersonShape-code a sh:PropertyShape ;
+  sh:path ex:code ;
+  sh:maxCount 2 .

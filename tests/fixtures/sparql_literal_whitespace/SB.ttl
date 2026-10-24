@@ -1,0 +1,15 @@
+@prefix ex: <http://example.org/audit#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+ex:S a sh:NodeShape ;
+  sh:targetClass ex:T ;
+  sh:sparql [
+    sh:message "need one-space label" ;
+    sh:select """
+      SELECT $this WHERE {
+        FILTER NOT EXISTS {
+          $this <http://example.org/audit#label> "hello world"
+        }
+      }
+    """
+  ] .

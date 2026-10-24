@@ -1,0 +1,83 @@
+{
+  "id": "06_has_value",
+  "inventory_name": "V2_hasValue",
+  "redistribution": "copy",
+  "license_note": "W3C Software and Document License (data-shapes test suite) + evaluator G0/S0 split and interventions",
+  "designated": {
+    "focus": "http://datashapes.org/sh/tests/core/property/hasValue-001.test#InvalidMalePerson",
+    "path": "http://datashapes.org/sh/tests/core/property/hasValue-001.test#gender",
+    "source_shape": "http://datashapes.org/sh/tests/core/property/hasValue-001.test#PersonShape-gender",
+    "component": "http://www.w3.org/ns/shacl#HasValueConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "files": {
+    "G0": {
+      "sha256": "ff29f6493403d891d7efff1e118fb85fba846e501fdd12fc7b82035eea63efed",
+      "bytes": 480,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/G0.ttl"
+    },
+    "S0": {
+      "sha256": "5a0708ca61600f437a6a68e7d49eacf5076e7aa0ceac1533ed1b9109e27f80b9",
+      "bytes": 495,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/S0.ttl"
+    },
+    "GA": {
+      "sha256": "ca9d1125ee7e570c791dccd5c570e72a7ec670899a503f7dd8f3d95f8204b4bf",
+      "bytes": 496,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/GA.ttl"
+    },
+    "SB": {
+      "sha256": "be8856f8049c22c24dc2e7ed236cc2d89295cc361c96bcd7da41bedb9d3f6413",
+      "bytes": 470,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/SB.ttl"
+    }
+  },
+  "provenance": {
+    "upstream_repository_claimed": "https://github.com/w3c/data-shapes",
+    "w3c_relative_path": "data-shapes-test-suite/tests/core/property/hasValue-001.ttl",
+    "source_commit_sha_local_clone": "8ca23f24d08e2cd364204f4b85ecf5bf15175720",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "evaluator_constructed": [
+      "G0/S0 split",
+      "GA add gender male",
+      "SB remove sh:hasValue male"
+    ],
+    "local_recovery_paths": {
+      "G0": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/G0.ttl",
+      "S0": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/S0.ttl",
+      "GA": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/GA.ttl",
+      "SB": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v2_hasValue/SB.ttl"
+    }
+  },
+  "historical_outcomes": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "NOT_EVALUATED",
+    "B_original": "NOT_EVALUATED",
+    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/reports_final_review/v2.json",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true
+  },
+  "current_expected": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED"
+  },
+  "historical_vs_current_deltas": [
+    {
+      "field": "A_original",
+      "historical": "NOT_EVALUATED",
+      "current_expected": "SATISFIED"
+    },
+    {
+      "field": "B_original",
+      "historical": "NOT_EVALUATED",
+      "current_expected": "VIOLATED"
+    }
+  ],
+  "delta_interpretation": "Legitimate semantics evolution for original-constraint (VR-filter / blank-focus). A/B CLEAR/PERSIST outcomes are the primary historical anchors when listed.",
+  "historical_id": "06_V2_hasValue"
+}

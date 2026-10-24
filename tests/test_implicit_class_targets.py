@@ -3,9 +3,7 @@ from rdflib.namespace import RDF, RDFS, SH
 
 from shacl_compare.targets import all_targets, membership_for_focus, shacl_instances
 
-
 EX = URIRef("http://example.org/implicit#")
-
 
 def test_shacl_instances_direct_and_subclass():
     data = Graph()
@@ -18,7 +16,6 @@ def test_shacl_instances_direct_and_subclass():
     assert str(EX + "Alice") in got
     assert str(EX + "Bob") in got
     assert str(EX + "Carol") not in got
-
 
 def test_implicit_class_target_direct():
     data = Graph()
@@ -45,7 +42,6 @@ def test_implicit_class_target_direct():
         for r in person_table["membership_reasons"][str(EX + "Alice")]
     )
 
-
 def test_implicit_class_target_via_subclass():
     data = Graph()
     data.add((EX + "Alice", RDF.type, EX + "Student"))
@@ -66,7 +62,6 @@ def test_implicit_class_target_via_subclass():
     memb = membership_for_focus(tables, str(EX + "Alice"), str(prop), shapes)
     assert memb["targeted"] is True
     assert memb["status"] == "IN_OWNER"
-
 
 def test_explicit_target_class_via_subclass():
     data = Graph()

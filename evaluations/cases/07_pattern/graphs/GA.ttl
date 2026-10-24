@@ -1,0 +1,16 @@
+@prefix ex: <http://datashapes.org/sh/tests/core/property/pattern-001.test#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:InvalidInstance1 a ex:TestShape ;
+    rdfs:label "Invalid instance1" ;
+    ex:property "John" .
+
+ex:InvalidInstance2 a ex:TestShape ;
+    rdfs:label "Invalid instance2" ;
+    ex:property "john" .
+
+ex:ValidInstance1 a ex:TestShape ;
+    rdfs:label "Valid instance1" ;
+    ex:property "Hi Joh",
+        "John" .
+

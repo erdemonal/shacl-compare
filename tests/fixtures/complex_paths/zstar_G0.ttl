@@ -1,0 +1,4 @@
+@prefix ex: <http://example.org/cpath#> .
+
+ex:Alice a ex:Person .
+ex:Bob a ex:Person .

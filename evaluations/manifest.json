@@ -1,0 +1,184 @@
+{
+  "package_id": "evaluations",
+  "version": "0.1.0",
+  "research_question": "How can changes to RDF data and SHACL constraints be compared when resolving the same validation failure?",
+  "tool_role": "comparator_of_given_interventions_not_generator",
+  "n_cases": 9,
+  "cases": [
+    {
+      "id": "01_max_count",
+      "inventory_name": "pilot1_maxCount",
+      "redistribution": "copy",
+      "designated": {
+        "focus": "http://datashapes.org/sh/tests/core/property/maxCount-001.test#InvalidPerson",
+        "path": "http://datashapes.org/sh/tests/core/property/maxCount-001.test#firstName",
+        "source_shape": "http://datashapes.org/sh/tests/core/property/maxCount-001.test#PersonShape-firstName",
+        "component": "http://www.w3.org/ns/shacl#MaxCountConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "CLEAR",
+        "B_outcome": "CLEAR",
+        "A_original": "SATISFIED",
+        "B_original": "VIOLATED"
+      },
+      "historical_id": "01_pilot1_maxCount"
+    },
+    {
+      "id": "02_min_count",
+      "inventory_name": "pilot2_minCount",
+      "redistribution": "copy",
+      "designated": {
+        "focus": "http://datashapes.org/sh/tests/core/property/minCount-001.test#InvalidPerson",
+        "path": "http://datashapes.org/sh/tests/core/property/minCount-001.test#firstName",
+        "source_shape": "http://datashapes.org/sh/tests/core/property/minCount-001.test#PersonShape-firstName",
+        "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "CLEAR",
+        "B_outcome": "CLEAR",
+        "A_original": "SATISFIED",
+        "B_original": "VIOLATED"
+      },
+      "historical_id": "02_pilot2_minCount"
+    },
+    {
+      "id": "03_other_focus",
+      "inventory_name": "pilot3_other_focus",
+      "redistribution": "copy",
+      "designated": {
+        "focus": "http://org.shacl.repairs.tests/other-focus-minCount#PersonA",
+        "path": "http://org.shacl.repairs.tests/other-focus-minCount#firstName",
+        "source_shape": "http://org.shacl.repairs.tests/other-focus-minCount#PersonShape-firstName",
+        "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "CLEAR",
+        "B_outcome": "CLEAR",
+        "A_original": "SATISFIED",
+        "B_original": "VIOLATED"
+      },
+      "historical_id": "03_pilot3_other_focus"
+    },
+    {
+      "id": "04_dcat_ap_lu_title",
+      "inventory_name": "c_eval_v01_dcat_ap_lu_title",
+      "redistribution": "materialize",
+      "designated": {
+        "focus": "http://example.org/dataset-no-title",
+        "path": "http://purl.org/dc/terms/title",
+        "source_shape": "https://mindig_lu.gitlab.io/DCAT-AP-LU#dcat-Dataset-dct-title",
+        "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "CLEAR",
+        "B_outcome": "CLEAR",
+        "A_original": "SATISFIED",
+        "B_original": "VIOLATED"
+      },
+      "historical_id": "04_c_eval_v01_dcat_ap_lu_title"
+    },
+    {
+      "id": "05_dcat_ap_rights",
+      "inventory_name": "c_eval_v02_dcat_ap_rights",
+      "redistribution": "materialize",
+      "designated": {
+        "focus": "bnode[type=http://www.w3.org/ns/dcat#Distribution]",
+        "path": "http://purl.org/dc/terms/rights",
+        "source_shape": "https://semiceu.github.io/DCAT-AP/releases/3.0.0/shacl/dcat-ap-SHACL.ttl#dcat:DistributionShape/3844f5a8620973800a0f9d6121572dbe0082c955",
+        "component": "http://www.w3.org/ns/shacl#MaxCountConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "CLEAR",
+        "B_outcome": "CLEAR",
+        "A_original": "SATISFIED",
+        "B_original": "VIOLATED"
+      },
+      "historical_id": "05_c_eval_v02_dcat_ap_rights"
+    },
+    {
+      "id": "06_has_value",
+      "inventory_name": "V2_hasValue",
+      "redistribution": "copy",
+      "designated": {
+        "focus": "http://datashapes.org/sh/tests/core/property/hasValue-001.test#InvalidMalePerson",
+        "path": "http://datashapes.org/sh/tests/core/property/hasValue-001.test#gender",
+        "source_shape": "http://datashapes.org/sh/tests/core/property/hasValue-001.test#PersonShape-gender",
+        "component": "http://www.w3.org/ns/shacl#HasValueConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "CLEAR",
+        "B_outcome": "CLEAR",
+        "A_original": "SATISFIED",
+        "B_original": "VIOLATED"
+      },
+      "historical_id": "06_V2_hasValue"
+    },
+    {
+      "id": "07_pattern",
+      "inventory_name": "V3_pattern",
+      "redistribution": "copy",
+      "designated": {
+        "focus": "http://datashapes.org/sh/tests/core/property/pattern-001.test#InvalidInstance1",
+        "path": "http://datashapes.org/sh/tests/core/property/pattern-001.test#property",
+        "source_shape": "http://datashapes.org/sh/tests/core/property/pattern-001.test#TestShape-property",
+        "component": "http://www.w3.org/ns/shacl#PatternConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "CLEAR",
+        "B_outcome": "CLEAR",
+        "A_original": "SATISFIED",
+        "B_original": "VIOLATED"
+      },
+      "historical_id": "07_V3_pattern"
+    },
+    {
+      "id": "08_target_subjects_of",
+      "inventory_name": "V5_targetSubjectsOf",
+      "redistribution": "copy",
+      "designated": {
+        "focus": "http://datashapes.org/sh/tests/core/targets/targetSubjectsOf-001.test#InvalidInstance1",
+        "path": "http://datashapes.org/sh/tests/core/targets/targetSubjectsOf-001.test#myProperty",
+        "source_shape": "http://datashapes.org/sh/tests/core/targets/targetSubjectsOf-001.test#TestShape-myProperty",
+        "component": "http://www.w3.org/ns/shacl#MaxCountConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "CLEAR",
+        "B_outcome": "CLEAR",
+        "A_original": "SATISFIED",
+        "B_original": "VIOLATED"
+      },
+      "historical_id": "08_V5_targetSubjectsOf"
+    },
+    {
+      "id": "09_dcat_ap_lu_title_resource",
+      "inventory_name": "V6_dcat_ap_lu_title_NEW",
+      "redistribution": "materialize",
+      "designated": {
+        "focus": "http://example.org/dataset-no-title",
+        "path": "http://purl.org/dc/terms/title",
+        "source_shape": "https://mindig_lu.gitlab.io/DCAT-AP-LU#dcat-Dataset-dct-title",
+        "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "CLEAR",
+        "B_outcome": "CLEAR",
+        "A_original": "SATISFIED",
+        "B_original": "VIOLATED"
+      },
+      "historical_id": "09_V6_dcat_ap_lu_title_NEW"
+    }
+  ],
+  "workdir": ".workdir (gitignored); holds prepared graphs for materialize-mode cases",
+  "runner": "run_evaluations.py",
+  "inputs": "inputs/ holds small evaluator fixtures used by prepare_evaluations.py",
+  "prepare": "prepare_evaluations.py (pinned HTTPS fetch + deterministic interventions; no private local paths)"
+}

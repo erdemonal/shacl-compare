@@ -1,0 +1,10 @@
+@prefix ex: <http://example.org/cpath#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+ex:PersonShape a sh:NodeShape ;
+  sh:targetClass ex:Person ;
+  sh:property ex:KnowsPlusPS .
+
+ex:KnowsPlusPS
+  sh:path [ sh:oneOrMorePath ex:knows ] ;
+  sh:minCount 1 .

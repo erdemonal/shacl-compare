@@ -1,0 +1,14 @@
+@prefix ex: <http://datashapes.org/sh/tests/core/property/hasValue-001.test#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:PersonShape a sh:NodeShape ;
+    rdfs:label "Person shape" ;
+    sh:property ex:PersonShape-gender ;
+    sh:targetClass ex:MalePerson .
+
+ex:PersonShape-gender rdfs:label "gender" ;
+    sh:datatype xsd:string ;
+    sh:path ex:gender .
+

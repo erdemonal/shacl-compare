@@ -1,0 +1,65 @@
+{
+  "id": "03_other_focus",
+  "inventory_name": "pilot3_other_focus",
+  "redistribution": "copy",
+  "license_note": "Evaluator-authored synthetic fixture (no upstream copy)",
+  "designated": {
+    "focus": "http://org.shacl.repairs.tests/other-focus-minCount#PersonA",
+    "path": "http://org.shacl.repairs.tests/other-focus-minCount#firstName",
+    "source_shape": "http://org.shacl.repairs.tests/other-focus-minCount#PersonShape-firstName",
+    "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "files": {
+    "G0": {
+      "sha256": "0bd324cfc1d3dfa1f67c9c39a6e70c79cdb465066c73eb1144492101a796f828",
+      "bytes": 804,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/other_focus_minCount/baseline_combined.ttl"
+    },
+    "S0": {
+      "sha256": "0bd324cfc1d3dfa1f67c9c39a6e70c79cdb465066c73eb1144492101a796f828",
+      "bytes": 804,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/other_focus_minCount/baseline_combined.ttl"
+    },
+    "GA": {
+      "sha256": "0d7dfc6a87a9012c9d5ff3c5b43856299d70021f6ab52b3b2cb3cb323173f3d0",
+      "bytes": 840,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/other_focus_minCount/after_data_repair_data.ttl"
+    },
+    "SB": {
+      "sha256": "1faa243f08afc43be8abc6c8a6091143effed010abacafc439bfaeea8a6877f7",
+      "bytes": 804,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/other_focus_minCount/after_constraint_revision_shapes.ttl"
+    }
+  },
+  "provenance": {
+    "upstream_kind": "synthetic",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "local_recovery_paths": {
+      "G0": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/other_focus_minCount/baseline_combined.ttl",
+      "S0": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/other_focus_minCount/baseline_combined.ttl",
+      "GA": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/other_focus_minCount/after_data_repair_data.ttl",
+      "SB": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/other_focus_minCount/after_constraint_revision_shapes.ttl"
+    }
+  },
+  "historical_outcomes": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED",
+    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/reports/five_experiments/pilot3_other_focus.json",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true
+  },
+  "current_expected": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED"
+  },
+  "historical_vs_current_deltas": [],
+  "delta_interpretation": "Current matches historical core outcomes.",
+  "historical_id": "03_pilot3_other_focus"
+}

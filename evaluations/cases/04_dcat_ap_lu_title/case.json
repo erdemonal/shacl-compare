@@ -1,0 +1,72 @@
+{
+  "id": "04_dcat_ap_lu_title",
+  "inventory_name": "c_eval_v01_dcat_ap_lu_title",
+  "redistribution": "materialize",
+  "license_note": "DCAT-AP-LU README (pinned commit) states documents/reports/specifications are CC-BY-4.0; no LICENSE file in repo. Large shapes are fetched at prepare time (not vendored). Small evaluator G0/GA fixtures live under inputs/.",
+  "designated": {
+    "focus": "http://example.org/dataset-no-title",
+    "path": "http://purl.org/dc/terms/title",
+    "source_shape": "https://mindig_lu.gitlab.io/DCAT-AP-LU#dcat-Dataset-dct-title",
+    "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "files": {
+    "G0": {
+      "sha256": "6579f4d7f33ec04b5d2358eccd89d8c0639a02f315b0b41ec1e3b51fa5166203",
+      "bytes": 512,
+      "construction": "inputs/04_G0.ttl (evaluator-normalized serialization; RDF-isomorphic to pinned upstream invalid title fixture)"
+    },
+    "S0": {
+      "sha256": "1e817609fb9f38a5c67740bf2813a3693bb6cbbd7ea3259658fc0e294ac2130e",
+      "bytes": 44949,
+      "construction": "fetch pinned dcat_ap_lu_CM_shapes.ttl (verbatim upstream bytes)"
+    },
+    "GA": {
+      "sha256": "a2ad571f94d7da0abfaa6aa33f11f3c81045f77a58c4197058384d77222d0ad9",
+      "bytes": 570,
+      "construction": "inputs/04_GA.ttl (evaluator intervention: add SYNTHETIC_PLACEHOLDER_TITLE_NOT_FACTUAL literal)"
+    },
+    "SB": {
+      "sha256": "e46171d2a1d56a0df8c750cfd8a4f7ee55c383f7caee8ad403c7642ab38b6f9c",
+      "bytes": 44949,
+      "construction": "text-edit S0: designated property shape sh:minCount 1 -> 0 (single-character, deterministic)"
+    }
+  },
+  "provenance": {
+    "upstream_repository": "https://github.com/meaningfy-ws/dcat-ap-lu",
+    "upstream_commit": "e62932a78be506673de9234fa25be3089e20264d",
+    "upstream_data_path": "tests/test_data/shacl/dcat-Dataset-dct-title/dcat-Dataset-dct-title_invalid.ttl",
+    "upstream_data_sha256": "73eb114c0079d7d7fbf9459dcab2f9e358c5d7f160e41ac001bf888ebb691d15",
+    "upstream_shapes_path": "implementation/dcat_ap_lu/shacl_shapes/dcat_ap_lu_CM_shapes.ttl",
+    "upstream_shapes_sha256": "1e817609fb9f38a5c67740bf2813a3693bb6cbbd7ea3259658fc0e294ac2130e",
+    "upstream_license_evidence": "README.md \u00a7License: documents/reports/specifications CC-BY-4.0; no root LICENSE file",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "intervention_summary": {
+      "GA": "Add synthetic dct:title literal SYNTHETIC_PLACEHOLDER_TITLE_NOT_FACTUAL",
+      "SB": "Change designated property shape sh:minCount 1 -> 0"
+    },
+    "reconstruction": "clean_checkout_fetch_and_construct",
+    "historical_snapshot_note": "Original packaging snapshot S0/SB were rdflib round-trips of upstream shapes (incidental owl:Class/DatatypeProperty subclass axioms; SB was a 1-char minCount edit of that snapshot). Clean reconstruction uses verbatim upstream S0 + the same 1-char SB edit. G0/GA bytes match the historical evaluation inputs. Outcomes unchanged.",
+    "source_txt": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/fixtures/c_eval_v01/SOURCE.txt"
+  },
+  "historical_outcomes": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED",
+    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/reports/five_experiments/c_eval_v01.json",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true
+  },
+  "current_expected": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED"
+  },
+  "historical_vs_current_deltas": [],
+  "delta_interpretation": "Current matches historical core outcomes.",
+  "historical_id": "04_c_eval_v01_dcat_ap_lu_title"
+}

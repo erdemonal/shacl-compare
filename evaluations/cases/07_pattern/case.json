@@ -1,0 +1,82 @@
+{
+  "id": "07_pattern",
+  "inventory_name": "V3_pattern",
+  "redistribution": "copy",
+  "license_note": "W3C Software and Document License + evaluator interventions",
+  "designated": {
+    "focus": "http://datashapes.org/sh/tests/core/property/pattern-001.test#InvalidInstance1",
+    "path": "http://datashapes.org/sh/tests/core/property/pattern-001.test#property",
+    "source_shape": "http://datashapes.org/sh/tests/core/property/pattern-001.test#TestShape-property",
+    "component": "http://www.w3.org/ns/shacl#PatternConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "files": {
+    "G0": {
+      "sha256": "656ac6ae61aa1418081476d38461cc41125d31ee535ba362cb4626a54e556f98",
+      "bytes": 451,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v3_pattern/G0.ttl"
+    },
+    "S0": {
+      "sha256": "44d53ca150f5fa6a84124870e0bd67ff007940222d62e790f3dc2f0d255ebb33",
+      "bytes": 449,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v3_pattern/S0.ttl"
+    },
+    "GA": {
+      "sha256": "a895c12b8094c2852610a5a8a2ef3b9e88428ce0beef3083f04f08dd144b0437",
+      "bytes": 450,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v3_pattern/GA.ttl"
+    },
+    "SB": {
+      "sha256": "c35d6bffb6923ee6f5b5a1242aadf7ce42bdcd65d4a4fe0dfae7b72612b418c8",
+      "bytes": 426,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v3_pattern/SB.ttl"
+    }
+  },
+  "provenance": {
+    "w3c_relative_path": "data-shapes-test-suite/tests/core/property/pattern-001.ttl",
+    "source_commit_sha_local_clone": "8ca23f24d08e2cd364204f4b85ecf5bf15175720",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "evaluator_constructed": [
+      "G0/S0 split",
+      "GA Maria->John on Instance1",
+      "SB remove sh:pattern"
+    ],
+    "local_recovery_paths": {
+      "G0": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v3_pattern/G0.ttl",
+      "S0": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v3_pattern/S0.ttl",
+      "GA": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v3_pattern/GA.ttl",
+      "SB": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/v3_pattern/SB.ttl"
+    }
+  },
+  "historical_outcomes": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "NOT_EVALUATED",
+    "B_original": "NOT_EVALUATED",
+    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/.tmp/independent_eval/reports_final_review/v3.json",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true
+  },
+  "current_expected": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED"
+  },
+  "historical_vs_current_deltas": [
+    {
+      "field": "A_original",
+      "historical": "NOT_EVALUATED",
+      "current_expected": "SATISFIED"
+    },
+    {
+      "field": "B_original",
+      "historical": "NOT_EVALUATED",
+      "current_expected": "VIOLATED"
+    }
+  ],
+  "delta_interpretation": "Legitimate semantics evolution for original-constraint (VR-filter / blank-focus). A/B CLEAR/PERSIST outcomes are the primary historical anchors when listed.",
+  "historical_id": "07_V3_pattern"
+}

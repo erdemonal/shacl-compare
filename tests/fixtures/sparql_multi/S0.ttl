@@ -1,0 +1,21 @@
+@prefix ex: <http://example.org/sparql#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+ex:PersonShape a sh:NodeShape ;
+  sh:targetClass ex:Person ;
+  sh:sparql [
+    sh:message "need email" ;
+    sh:select """
+      SELECT $this WHERE {
+        FILTER NOT EXISTS { $this <http://example.org/sparql#email> ?e }
+      }
+    """
+  ] ;
+  sh:sparql [
+    sh:message "need name" ;
+    sh:select """
+      SELECT $this WHERE {
+        FILTER NOT EXISTS { $this <http://example.org/sparql#name> ?n }
+      }
+    """
+  ] .

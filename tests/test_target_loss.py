@@ -7,7 +7,6 @@ from shacl_compare.cli import main
 
 FIX = Path(__file__).parent / "fixtures" / "target_loss"
 
-
 def test_clear_with_target_loss_not_satisfied(tmp_path: Path):
     out = tmp_path / "report.json"
     rc = main(

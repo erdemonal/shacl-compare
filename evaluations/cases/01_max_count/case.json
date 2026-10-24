@@ -1,0 +1,66 @@
+{
+  "id": "01_max_count",
+  "inventory_name": "pilot1_maxCount",
+  "redistribution": "copy",
+  "license_note": "W3C Software and Document License (upstream test suite lineage) + evaluator interventions",
+  "designated": {
+    "focus": "http://datashapes.org/sh/tests/core/property/maxCount-001.test#InvalidPerson",
+    "path": "http://datashapes.org/sh/tests/core/property/maxCount-001.test#firstName",
+    "source_shape": "http://datashapes.org/sh/tests/core/property/maxCount-001.test#PersonShape-firstName",
+    "component": "http://www.w3.org/ns/shacl#MaxCountConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "files": {
+    "G0": {
+      "sha256": "d5f50b6db1789742aa5fd700ba7ff4ce98e79a2541e111cd1da615ae5877a61f",
+      "bytes": 2299,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/baseline_combined.ttl"
+    },
+    "S0": {
+      "sha256": "d5f50b6db1789742aa5fd700ba7ff4ce98e79a2541e111cd1da615ae5877a61f",
+      "bytes": 2299,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/baseline_combined.ttl"
+    },
+    "GA": {
+      "sha256": "443f3121b0e366e3dca067dd9afbd3576aaefb5a0a848156906b564790894176",
+      "bytes": 2281,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/after_data_repair_data.ttl"
+    },
+    "SB": {
+      "sha256": "e57274b2637113b201b002bf0ee1d6caadc302b06bcd35e923bb19a1d87b10c6",
+      "bytes": 2299,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/after_constraint_revision_shapes.ttl"
+    }
+  },
+  "provenance": {
+    "upstream_kind": "W3C SHACL Core maxCount-001 (via shacl-repairs mirror / data-shapes lineage)",
+    "fixture_note": "Combined baseline document split/used as G0=S0; GA/SB evaluator-created for pilot.",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "local_recovery_paths": {
+      "G0": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/baseline_combined.ttl",
+      "S0": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/baseline_combined.ttl",
+      "GA": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/after_data_repair_data.ttl",
+      "SB": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/after_constraint_revision_shapes.ttl"
+    }
+  },
+  "historical_outcomes": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED",
+    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/reports/five_experiments/pilot1_maxcount.json",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true
+  },
+  "current_expected": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED"
+  },
+  "historical_vs_current_deltas": [],
+  "delta_interpretation": "Current matches historical core outcomes.",
+  "historical_id": "01_pilot1_maxCount"
+}

@@ -5,6 +5,11 @@ from typing import Any
 from rdflib import Graph
 from rdflib.namespace import RDF, SH
 
+from shacl_compare.custom_constraint_components import (
+    annotate_results_with_custom_cc_fingerprints,
+)
+from shacl_compare.paths import annotate_results_with_path_fingerprints
+from shacl_compare.sparql_constraints import annotate_results_with_sparql_fingerprints
 from shacl_compare.terms import node_focus_key
 
 try:
@@ -45,6 +50,7 @@ def extract_results(
         for pred, key in (
             (SH.resultPath, "result_path"),
             (SH.sourceShape, "source_shape"),
+            (SH.sourceConstraint, "source_constraint"),
             (SH.sourceConstraintComponent, "source_constraint_component"),
             (SH.resultSeverity, "severity"),
             (SH.value, "value"),
@@ -76,6 +82,9 @@ def run_validation(
         **VALIDATE_KWARGS,
     )
     results = extract_results(report_graph, data, focus_key_properties)
+    results = annotate_results_with_path_fingerprints(results, shapes)
+    results = annotate_results_with_sparql_fingerprints(results, shapes)
+    results = annotate_results_with_custom_cc_fingerprints(results, shapes)
     return {
         "conforms": bool(conforms),
         "results": results,

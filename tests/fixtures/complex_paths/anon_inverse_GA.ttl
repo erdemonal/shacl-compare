@@ -1,0 +1,4 @@
+@prefix ex: <http://example.org/cpath#> .
+
+ex:Kid a ex:Child .
+ex:Mom ex:parentOf ex:Kid .

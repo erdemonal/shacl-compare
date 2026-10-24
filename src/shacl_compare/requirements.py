@@ -42,7 +42,7 @@ def load_requirement_card(path: Path) -> dict[str, Any]:
     param = str(data["parameter"])
     if param not in SUPPORTED_PARAMETERS:
         raise ValueError(
-            f"unsupported requirement parameter {param!r}; "
+            f"unsupported requirement parameter {param!r}. "
             f"v0.1 supports only sh:minCount and sh:maxCount"
         )
     expected = _parse_non_negative_int(data["expected_value"])

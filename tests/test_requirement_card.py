@@ -7,7 +7,6 @@ from shacl_compare.cli import main
 
 FIX = Path(__file__).parent / "fixtures" / "maxcount"
 
-
 def test_requirement_card(tmp_path: Path):
     card = tmp_path / "card.json"
     card.write_text(

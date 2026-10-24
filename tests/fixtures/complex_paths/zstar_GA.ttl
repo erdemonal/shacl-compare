@@ -1,0 +1,5 @@
+@prefix ex: <http://example.org/cpath#> .
+
+ex:Alice a ex:Person ;
+  ex:knows ex:Bob .
+ex:Bob a ex:Person .

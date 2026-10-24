@@ -1,0 +1,10 @@
+@prefix ex: <http://example.org/cpath#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:ChildShape a sh:NodeShape ;
+  sh:targetClass ex:Child ;
+  sh:property [
+    sh:path [ sh:inversePath ex:parentOf ] ;
+    sh:minCount 0
+  ] .

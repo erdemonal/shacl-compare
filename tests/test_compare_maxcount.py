@@ -7,7 +7,6 @@ from shacl_compare.cli import main
 
 FIX = Path(__file__).parent / "fixtures" / "maxcount"
 
-
 def test_maxcount_compare(tmp_path: Path):
     out = tmp_path / "report.json"
     rc = main(

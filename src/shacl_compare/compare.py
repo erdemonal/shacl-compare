@@ -14,13 +14,29 @@ from shacl_compare import __version__
 from shacl_compare.designate import (
     DesignateError,
     align_source_shape,
+    combine_original_with_cardinality_crosscheck,
     evaluate_original_cardinality_on_focus,
+    evaluate_original_constraint_from_s0_results,
     find_parent_node_shapes,
+    is_absolute_iri,
     match_designated_after,
+    resolve_shape_node,
     select_designated,
 )
+from shacl_compare.formal import ORIGINAL_CONSTRAINT_SEMANTICS
 from shacl_compare.diff import MAX_TRIPLES_FOR_ISO, diff_graphs
 from shacl_compare.graph_io import load_graph
+from shacl_compare.paths import (
+    paths_match,
+    resolve_designation_path_fingerprint,
+    shape_path_fingerprint_str,
+)
+from shacl_compare.custom_constraint_components import is_user_constraint_component
+from shacl_compare.sparql_constraints import (
+    SPARQL_CONSTRAINT_COMPONENT,
+    component_requires_structural_fingerprint,
+    is_structural_constraint_fingerprint,
+)
 from shacl_compare.requirements import (
     assess_cardinality_condition,
     load_requirement_card,
@@ -38,12 +54,13 @@ class CompareConfig:
     shapes_revision: Path
     focus: str
     path: str
-    source_shape: str
+    source_shape: str | None
     component: str
     severity: str
     focus_key_properties: list[str]
     requirement_card: Path | None
     out: Path
+    designation_index: int | None = None
 
 
 def _focus_props(iris: list[str]) -> list[URIRef]:
@@ -57,14 +74,21 @@ def _signature(
     source_shape: str,
     component: str,
     severity: str,
+    path_fingerprint: str | None = None,
+    sparql_fingerprint: str | None = None,
 ) -> dict[str, str]:
-    return {
+    out: dict[str, str] = {
         "focus_key": focus_key,
         "result_path": path,
         "source_shape": source_shape,
         "source_constraint_component": component,
         "severity": severity,
     }
+    if path_fingerprint is not None:
+        out["path_fingerprint"] = path_fingerprint
+    if sparql_fingerprint is not None:
+        out["sparql_fingerprint"] = sparql_fingerprint
+    return out
 
 
 def _target_status(before: bool, after: bool) -> str:
@@ -82,7 +106,6 @@ def _focus_key_resolvable(
     focus_key: str,
     focus_key_properties: list[URIRef],
 ) -> str:
-    """unique | missing | ambiguous | iri"""
     if not focus_key.startswith("bnode["):
         return "iri"
     hits = [
@@ -106,19 +129,35 @@ def _other_focus_rows(
     component: str,
     severity: str,
     source_shapes: set[str],
+    path_fingerprint: str | None = None,
+    sparql_fingerprint: str | None = None,
 ) -> list[dict[str, Any]]:
     def relevant(results: list[dict[str, Any]]) -> dict[str, bool]:
         out: dict[str, bool] = {}
         for r in results:
-            if (
-                str(r.get("result_path", "")) == path
-                and str(r.get("source_constraint_component", "")) == component
-                and str(r.get("severity", "")) == severity
-                and str(r.get("source_shape", "")) in source_shapes
+            if str(r.get("source_constraint_component", "")) != component:
+                continue
+            if str(r.get("severity", "")) != severity:
+                continue
+            if str(r.get("source_shape", "")) not in source_shapes:
+                continue
+            if not paths_match(
+                row_path=str(r.get("result_path", "") or ""),
+                row_fp=r.get("path_fingerprint"),
+                designated_path=path,
+                designated_fp=path_fingerprint,
             ):
-                fk = str(r.get("focus_key", ""))
-                if fk and fk != designated_focus_key:
-                    out[fk] = True
+                continue
+            if component_requires_structural_fingerprint(
+                component, designated_fp=sparql_fingerprint
+            ) or is_structural_constraint_fingerprint(sparql_fingerprint):
+                if sparql_fingerprint is None:
+                    continue
+                if r.get("sparql_fingerprint") != sparql_fingerprint:
+                    continue
+            fk = str(r.get("focus_key", ""))
+            if fk and fk != designated_focus_key:
+                out[fk] = True
         return out
 
     before = relevant(baseline_results)
@@ -137,28 +176,80 @@ def _other_focus_rows(
     return rows
 
 
+def _path_identity(r: dict[str, Any]) -> str:
+    fp = r.get("path_fingerprint")
+    if fp is not None and fp != "":
+        return f"fp:{fp}"
+    rp = str(r.get("result_path", "") or "")
+    if is_absolute_iri(rp) or rp == "":
+        return rp
+    return f"unstable:{rp}"
+
+
+def _sparql_identity(r: dict[str, Any]) -> str:
+    fp = r.get("sparql_fingerprint")
+    if fp:
+        return f"sparql:{fp}"
+    sc = r.get("source_constraint")
+    if sc:
+        return f"sc:{sc}"
+    return ""
+
+
 def _result_signature(r: dict[str, Any]) -> tuple[str, ...]:
     value = r.get("value", "")
     if isinstance(value, list):
         value = "|".join(sorted(str(v) for v in value))
     return (
         str(r.get("focus_key", "")),
-        str(r.get("result_path", "")),
+        _path_identity(r),
         str(r.get("source_shape", "")),
         str(r.get("source_constraint_component", "")),
         str(r.get("severity", "")),
+        _sparql_identity(r),
         str(value),
     )
 
 
+def _designated_path_identity(designated: dict[str, str]) -> str:
+    fp = designated.get("path_fingerprint")
+    if fp is not None and fp != "":
+        return f"fp:{fp}"
+    rp = designated.get("result_path", "")
+    if is_absolute_iri(rp) or rp == "":
+        return rp
+    return f"unstable:{rp}"
+
+
+def _designated_sparql_identity(designated: dict[str, str]) -> str:
+    fp = designated.get("sparql_fingerprint")
+    if fp:
+        return f"sparql:{fp}"
+    return ""
+
+
 def _is_designated_signature(sig: tuple[str, ...], designated: dict[str, str]) -> bool:
-    return sig[:5] == (
+    path_id = _designated_path_identity(designated)
+    sparql_id = _designated_sparql_identity(designated)
+    if sig[:6] == (
         designated["focus_key"],
-        designated["result_path"],
+        path_id,
         designated["source_shape"],
         designated["source_constraint_component"],
         designated["severity"],
-    )
+        sparql_id,
+    ):
+        return True
+    # Blank sourceShape ids differ across S0 vs SB. Match without that field.
+    if not is_absolute_iri(designated["source_shape"]):
+        return (
+            sig[0] == designated["focus_key"]
+            and sig[1] == path_id
+            and sig[3] == designated["source_constraint_component"]
+            and sig[4] == designated["severity"]
+            and sig[5] == sparql_id
+        )
+    return False
 
 
 def _residuals_and_new(
@@ -223,6 +314,47 @@ def _residuals_and_new(
     }
 
 
+def _original_constraint_for_branch(
+    *,
+    s0_results: list[dict[str, Any]],
+    data_after,
+    shapes_baseline,
+    designated: dict[str, str],
+    focus_key_properties: list[URIRef],
+    targeted_under_s0: bool,
+) -> dict[str, Any]:
+    focus_key = designated["focus_key"]
+    path = designated["result_path"]
+    component = designated["source_constraint_component"]
+    severity = designated["severity"]
+    source_shape = designated["source_shape"]
+
+    vr = evaluate_original_constraint_from_s0_results(
+        s0_results,
+        focus_key=focus_key,
+        path=path,
+        source_shape=source_shape,
+        component=component,
+        severity=severity,
+        targeted=targeted_under_s0,
+        data_graph=data_after,
+        focus_key_properties=focus_key_properties,
+        path_fingerprint=designated.get("path_fingerprint"),
+        sparql_fingerprint=designated.get("sparql_fingerprint"),
+    )
+    card = evaluate_original_cardinality_on_focus(
+        data_after,
+        shapes_baseline,
+        focus_key=focus_key,
+        path=path,
+        source_shape=source_shape,
+        component=component,
+        focus_key_properties=focus_key_properties,
+        targeted=targeted_under_s0,
+    )
+    return combine_original_with_cardinality_crosscheck(vr, card)
+
+
 def _analyse_branch(
     *,
     label: str,
@@ -232,6 +364,7 @@ def _analyse_branch(
     shapes_after,
     shapes_baseline,
     data_for_original,
+    s0_results_for_original: list[dict[str, Any]],
     designated: dict[str, str],
     focus_key_properties: list[URIRef],
     is_revision: bool,
@@ -241,6 +374,8 @@ def _analyse_branch(
     component = designated["source_constraint_component"]
     severity = designated["severity"]
     source_shape = designated["source_shape"]
+    path_fingerprint = designated.get("path_fingerprint")
+    sparql_fingerprint = designated.get("sparql_fingerprint")
 
     alignment = {
         "shape_alignment": "ALIGNED",
@@ -250,7 +385,12 @@ def _analyse_branch(
     match_shape = source_shape
     if is_revision:
         alignment = align_source_shape(
-            shapes_baseline, shapes_after, source_shape, path, component
+            shapes_baseline,
+            shapes_after,
+            source_shape,
+            path,
+            component,
+            path_fingerprint=path_fingerprint,
         )
         if alignment["shape_alignment"] != "ALIGNED":
             targets_before = all_targets(
@@ -264,6 +404,14 @@ def _analyse_branch(
             )
             memb_a = membership_for_focus(
                 targets_after, focus_key, source_shape, shapes_baseline
+            )
+            original = _original_constraint_for_branch(
+                s0_results=s0_results_for_original,
+                data_after=data_after,
+                shapes_baseline=shapes_baseline,
+                designated=designated,
+                focus_key_properties=focus_key_properties,
+                targeted_under_s0=memb_b["targeted"],
             )
             return {
                 "label": label,
@@ -281,10 +429,7 @@ def _analyse_branch(
                     "before": memb_b,
                     "after": memb_a,
                 },
-                "original_constraint_evaluation": {
-                    "original_constraint_evaluation": "NOT_EVALUATED",
-                    "reason": "shape_alignment_unresolved",
-                },
+                "original_constraint_evaluation": original,
                 "other_focus_nodes": [],
                 "residual_results": _residuals_and_new(
                     baseline_results, after_validation["results"], designated
@@ -292,38 +437,54 @@ def _analyse_branch(
             }
         match_shape = alignment["aligned_source_shape"]
 
-    matches, match_mode = match_designated_after(
-        after_validation["results"],
-        focus_key=focus_key,
-        path=path,
-        source_shape=match_shape,
-        component=component,
-        severity=severity,
-    )
-    if not matches and match_shape != source_shape:
+    if (
+        component == SPARQL_CONSTRAINT_COMPONENT
+        or is_structural_constraint_fingerprint(sparql_fingerprint)
+        or component_requires_structural_fingerprint(
+            component, designated_fp=sparql_fingerprint
+        )
+    ) and not sparql_fingerprint:
+        matches, match_mode = [], "sparql_fingerprint_unavailable"
+        result_outcome = "NOT_COMPARABLE"
+    else:
         matches, match_mode = match_designated_after(
             after_validation["results"],
             focus_key=focus_key,
             path=path,
-            source_shape=source_shape,
+            source_shape=match_shape,
             component=component,
             severity=severity,
+            path_fingerprint=path_fingerprint,
+            sparql_fingerprint=sparql_fingerprint,
         )
+        if not matches and match_shape != source_shape:
+            matches, match_mode = match_designated_after(
+                after_validation["results"],
+                focus_key=focus_key,
+                path=path,
+                source_shape=source_shape,
+                component=component,
+                severity=severity,
+                path_fingerprint=path_fingerprint,
+                sparql_fingerprint=sparql_fingerprint,
+            )
 
-    if matches:
-        result_outcome = "PERSIST"
-    elif match_mode == "blank_focus_key_unmatched":
-        resolvable = _focus_key_resolvable(
-            data_after, focus_key, focus_key_properties
-        )
-        if resolvable == "unique":
-            result_outcome = "CLEAR"
-            match_mode = "blank_focus_key_absent_vr_identity_ok"
-        else:
+        if matches and match_mode == "core_signature_ambiguous":
             result_outcome = "NOT_COMPARABLE"
-            match_mode = f"blank_focus_key_unmatched_{resolvable}"
-    else:
-        result_outcome = "CLEAR"
+        elif matches:
+            result_outcome = "PERSIST"
+        elif match_mode == "blank_focus_key_unmatched":
+            resolvable = _focus_key_resolvable(
+                data_after, focus_key, focus_key_properties
+            )
+            if resolvable == "unique":
+                result_outcome = "CLEAR"
+                match_mode = "blank_focus_key_absent_vr_identity_ok"
+            else:
+                result_outcome = "NOT_COMPARABLE"
+                match_mode = f"blank_focus_key_unmatched_{resolvable}"
+        else:
+            result_outcome = "CLEAR"
 
     targets_before = all_targets(
         data_for_original, shapes_baseline, focus_key_properties
@@ -342,28 +503,15 @@ def _analyse_branch(
         )
     target_membership = _target_status(memb_b["targeted"], memb_a["targeted"])
 
-    if not is_revision:
-        original = evaluate_original_cardinality_on_focus(
-            data_after,
-            shapes_baseline,
-            focus_key=focus_key,
-            path=path,
-            source_shape=source_shape,
-            component=component,
-            focus_key_properties=focus_key_properties,
-            targeted=memb_a["targeted"],
-        )
-    else:
-        original = evaluate_original_cardinality_on_focus(
-            data_after,
-            shapes_baseline,
-            focus_key=focus_key,
-            path=path,
-            source_shape=source_shape,
-            component=component,
-            focus_key_properties=focus_key_properties,
-            targeted=memb_b["targeted"],
-        )
+    targeted_under_s0 = memb_a["targeted"] if not is_revision else memb_b["targeted"]
+    original = _original_constraint_for_branch(
+        s0_results=s0_results_for_original,
+        data_after=data_after,
+        shapes_baseline=shapes_baseline,
+        designated=designated,
+        focus_key_properties=focus_key_properties,
+        targeted_under_s0=targeted_under_s0,
+    )
 
     other_shapes = {source_shape}
     if match_shape:
@@ -389,6 +537,8 @@ def _analyse_branch(
             component=component,
             severity=severity,
             source_shapes=other_shapes,
+            path_fingerprint=path_fingerprint,
+            sparql_fingerprint=sparql_fingerprint,
         ),
         "residual_results": _residuals_and_new(
             baseline_results, after_validation["results"], designated
@@ -396,17 +546,38 @@ def _analyse_branch(
     }
 
 
-def _unsupported_construct_flags(s0, sb, path: str) -> list[str]:
+def _unsupported_construct_flags(
+    s0,
+    sb,
+    path: str,
+    path_fingerprint: str | None = None,
+    *,
+    component: str | None = None,
+    sparql_fingerprint: str | None = None,
+) -> list[str]:
     flags: list[str] = []
-    if not (
-        path.startswith("http://")
-        or path.startswith("https://")
-        or path.startswith("urn:")
-    ):
+    if path == "" and path_fingerprint in (None, ""):
+        flags.append("designated_path_empty_node_level_or_missing_result_path")
+    elif not is_absolute_iri(path):
         flags.append("designated_path_not_absolute_iri_predicate_path")
+        if not path_fingerprint:
+            flags.append("complex_or_blank_result_path_not_stable_across_parses")
     for label, g in (("baseline", s0), ("revision", sb)):
         if any(True for _ in g.triples((None, SH.sparql, None))):
-            flags.append(f"shapes_contain_sh_sparql_{label}")
+            if (
+                component == SPARQL_CONSTRAINT_COMPONENT
+                and sparql_fingerprint
+            ):
+                flags.append(f"shapes_contain_sh_sparql_{label}_matched_via_fingerprint")
+            else:
+                flags.append(f"shapes_contain_sh_sparql_{label}")
+        # Ordinary sh:sparql/sh:ask is unsupported. Custom ASK validators are OK.
+        for sparql_node in g.objects(None, SH.sparql):
+            if list(g.objects(sparql_node, SH.ask)):
+                flags.append(
+                    f"shapes_contain_sh_ask_unsupported_by_pyshacl_{label}"
+                )
+                break
         for obj in g.objects(None, SH.path):
             if isinstance(obj, BNode):
                 flags.append(f"shapes_contain_non_iri_path_{label}")
@@ -427,6 +598,10 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
     after_b = run_validation(g0, sb, focus_key_properties)
 
     focus_key = cfg.focus
+    designation_mode = "core_signature"
+    cli_path_fp = resolve_designation_path_fingerprint(
+        s0, path=str(cfg.path or ""), source_shape=cfg.source_shape
+    )
     try:
         designated_row = select_designated(
             baseline["results"],
@@ -435,6 +610,9 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
             source_shape=cfg.source_shape,
             component=cfg.component,
             severity=cfg.severity,
+            designation_index=cfg.designation_index,
+            path_fingerprint=cli_path_fp,
+            sparql_fingerprint=None,
         )
     except DesignateError:
         alt_keys = {
@@ -451,16 +629,55 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
                 source_shape=cfg.source_shape,
                 component=cfg.component,
                 severity=cfg.severity,
+                designation_index=cfg.designation_index,
+                path_fingerprint=cli_path_fp,
+                sparql_fingerprint=None,
             )
         else:
             raise
 
+    designation_mode = str(designated_row.pop("_designation_mode", designation_mode))
+    resolved_source_shape = str(designated_row.get("source_shape", ""))
+    if not resolved_source_shape:
+        raise DesignateError(
+            "designated baseline result is missing sh:sourceShape"
+        )
+    resolved_path = str(designated_row.get("result_path", "") or "")
+    cli_path = str(cfg.path or "")
+    if is_absolute_iri(cli_path) and resolved_path != cli_path:
+        raise DesignateError(
+            "designated resultPath does not match --path "
+            f"(result={resolved_path!r}, cli={cli_path!r}). "
+            "Refusing to continue with an ambiguous path identity"
+        )
+
+    resolved_fp = designated_row.get("path_fingerprint")
+    if resolved_fp is None:
+        resolved_fp = shape_path_fingerprint_str(s0, resolved_source_shape)
+    if resolved_fp is None:
+        resolved_fp = cli_path_fp
+
+    resolved_sparql_fp = designated_row.get("sparql_fingerprint")
+    if cfg.component == SPARQL_CONSTRAINT_COMPONENT and not resolved_sparql_fp:
+        raise DesignateError(
+            "designated SPARQLConstraintComponent result lacks a structural "
+            "sparql_fingerprint. Refusing ambiguous SPARQL constraint identity"
+        )
+    if is_user_constraint_component(s0, cfg.component) and not resolved_sparql_fp:
+        raise DesignateError(
+            "designated custom ConstraintComponent result lacks a structural "
+            "CUSTOMCC fingerprint (component/parameters/validator). Refusing "
+            "ambiguous custom constraint-component identity"
+        )
+
     designated = _signature(
         focus_key=focus_key,
-        path=cfg.path,
-        source_shape=cfg.source_shape,
+        path=resolved_path,
+        source_shape=resolved_source_shape,
         component=cfg.component,
         severity=cfg.severity,
+        path_fingerprint=resolved_fp,
+        sparql_fingerprint=resolved_sparql_fp,
     )
 
     data_diff = diff_graphs(g0, ga)
@@ -474,6 +691,7 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
         shapes_after=s0,
         shapes_baseline=s0,
         data_for_original=g0,
+        s0_results_for_original=after_a["results"],
         designated=designated,
         focus_key_properties=focus_key_properties,
         is_revision=False,
@@ -486,6 +704,7 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
         shapes_after=sb,
         shapes_baseline=s0,
         data_for_original=g0,
+        s0_results_for_original=baseline["results"],
         designated=designated,
         focus_key_properties=focus_key_properties,
         is_revision=True,
@@ -500,7 +719,7 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
             "on_revision_shapes": assess_cardinality_condition(sb, card),
             "note": (
                 "Assesses only whether the named cardinality parameter is present "
-                "as specified; not general domain correctness or full profile compliance."
+                "as specified, not general domain correctness or full profile compliance."
             ),
         }
 
@@ -531,7 +750,14 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
         if branch["result_outcome"] == "NOT_COMPARABLE":
             undetermined.append(f"designated_result_identity_{name}")
 
-    unsupported = _unsupported_construct_flags(s0, sb, cfg.path)
+    unsupported = _unsupported_construct_flags(
+        s0,
+        sb,
+        designated["result_path"],
+        path_fingerprint=designated.get("path_fingerprint"),
+        component=designated["source_constraint_component"],
+        sparql_fingerprint=designated.get("sparql_fingerprint"),
+    )
     undetermined.extend(unsupported)
 
     if designated["focus_key"].startswith("bnode["):
@@ -545,7 +771,10 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
     if shapes_diff.get("unchanged") is True:
         noop_warnings.append("constraint_revision_is_noop_relative_to_baseline_shapes")
 
-    parents = find_parent_node_shapes(s0, URIRef(cfg.source_shape))
+    resolved_node = resolve_shape_node(s0, resolved_source_shape)
+    parents = (
+        find_parent_node_shapes(s0, resolved_node) if resolved_node is not None else []
+    )
 
     return {
         "meta": {
@@ -565,18 +794,29 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
                 "A_validates_with": "S0",
                 "B_validates_with": "G0",
                 "note": (
-                    "Four-file interface fixes shapes for A and data for B; "
-                    "this is not an independent off-interface purity audit."
+                    "Four-file interface: A reuses baseline shapes S0. "
+                    "B reuses baseline data G0."
                 ),
             },
             "supported_scope_note": (
-                "Detailed comparison is reliable for SHACL Core property shapes with "
-                "IRI PredicatePaths and targetClass (SHACL instances via "
-                "rdf:type/rdfs:subClassOf* in the data graph), implicit class targets "
-                "(SHACL 1.0), targetNode/targetSubjectsOf/targetObjectsOf. Other "
-                "constructs may validate in pySHACL but are not fully tracked by this "
-                "comparator."
+                "Designated CLEAR/PERSIST comparison covers SHACL Core property "
+                "shapes with IRI PredicatePaths, all seven W3C property-path "
+                "forms via fingerprints, SHACL-SPARQL sh:sparql/SELECT "
+                "constraints via query fingerprints, and user-defined "
+                "SPARQL-based constraint components via CUSTOMCC fingerprints "
+                "(component IRI, parameter bindings, and validator query). "
+                "pySHACL 0.40.x runs these with advanced=False. Standard targets "
+                "are supported (targetClass, implicit class, targetNode, "
+                "targetSubjectsOf, targetObjectsOf). Anonymous property shapes "
+                "use focus/path/component/severity designation, with optional "
+                "--designation-index. Identical paths or SPARQL/CUSTOMCC "
+                "fingerprints without unique shape identity are NOT_COMPARABLE. "
+                "Original-constraint evaluation filters V(GA,S0) and V(G0,S0) "
+                "for the designated instance and does not use graph-wide "
+                "conforms. Ordinary sh:sparql with sh:ask is unsupported in "
+                "pySHACL 0.40.x. SHACL Advanced Features are out of scope."
             ),
+            "original_constraint_semantics": ORIGINAL_CONSTRAINT_SEMANTICS,
         },
         "inputs": {
             "data_baseline": str(cfg.data_baseline),
@@ -586,9 +826,13 @@ def run_compare(cfg: CompareConfig) -> dict[str, Any]:
             "requirement_card": (
                 str(cfg.requirement_card) if cfg.requirement_card else None
             ),
+            "source_shape_cli": cfg.source_shape,
+            "designation_index": cfg.designation_index,
         },
         "designated": {
             **designated,
+            "designation_mode": designation_mode,
+            "source_shape_is_absolute_iri": is_absolute_iri(resolved_source_shape),
             "baseline_result": designated_row,
             "parent_node_shapes": [str(p) for p in parents],
         },

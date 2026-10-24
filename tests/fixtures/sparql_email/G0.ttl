@@ -1,0 +1,4 @@
+@prefix ex: <http://example.org/sparql#> .
+
+ex:Alice a ex:Person .
+# missing ex:email → SPARQL SELECT violation

@@ -1,0 +1,6 @@
+@prefix ex: <http://example.org/cpath#> .
+
+ex:Alice a ex:Person ;
+  ex:address ex:Addr1 .
+
+ex:Addr1 ex:code "1000" .

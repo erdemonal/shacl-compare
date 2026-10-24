@@ -1,0 +1,77 @@
+{
+  "id": "05_dcat_ap_rights",
+  "inventory_name": "c_eval_v02_dcat_ap_rights",
+  "redistribution": "materialize",
+  "license_note": "SEMICeu/DCAT-AP and SEMICeu/GeoDCAT-AP are CC-BY-4.0 (GitHub license + LICENSE file). Upstream artefacts are fetched at prepare time; evaluator GA fixture under inputs/.",
+  "designated": {
+    "focus": "bnode[type=http://www.w3.org/ns/dcat#Distribution]",
+    "path": "http://purl.org/dc/terms/rights",
+    "source_shape": "https://semiceu.github.io/DCAT-AP/releases/3.0.0/shacl/dcat-ap-SHACL.ttl#dcat:DistributionShape/3844f5a8620973800a0f9d6121572dbe0082c955",
+    "component": "http://www.w3.org/ns/shacl#MaxCountConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "files": {
+    "G0": {
+      "sha256": "75fbdae0151dcea93507a1989e8275e9076d17f168e0b3975041b1eccfde551e",
+      "bytes": 741,
+      "construction": "extract free-text Turtle from pinned GeoDCAT-AP releases/3.0.0/index.html aside#ex-mapping-conditions-for-access-and-use; prepend only dcat:/dct: prefixes"
+    },
+    "S0": {
+      "sha256": "92f76609d78d257123e75bc6b7155df5cc0a63f14c29fbc12b0ac95c56af2059",
+      "bytes": 178717,
+      "construction": "fetch pinned DCAT-AP 3.0.0 dcat-ap-SHACL.ttl (verbatim upstream bytes)"
+    },
+    "GA": {
+      "sha256": "142f7519f9773d61f1f048ca1e9ac00ceba5b883a63d73369a59b79eef936597",
+      "bytes": 754,
+      "construction": "inputs/05_GA.ttl (evaluator intervention: detach INSPIRE dct:rights from Distribution; floating RightsStatement retained)"
+    },
+    "SB": {
+      "sha256": "8ae731c234aa19c92c449a764318bf3ca9a320ec32feb8d36c65f9d5e1e9bdb3",
+      "bytes": 178697,
+      "construction": "text-edit S0: remove shacl:maxCount 1 from designated Distribution.rights property shape"
+    }
+  },
+  "provenance": {
+    "geodcat_html": "https://semiceu.github.io/GeoDCAT-AP/releases/3.0.0/#ex-mapping-conditions-for-access-and-use",
+    "geodcat_repository": "https://github.com/SEMICeu/GeoDCAT-AP",
+    "geodcat_commit": "7e7d6a82f4bd4491c68f774f185193439881ab42",
+    "geodcat_html_path": "releases/3.0.0/index.html",
+    "geodcat_html_sha256": "c6916b14824967956009b9ec8961b105be802c794620e3b41ce46ebcb97225ae",
+    "geodcat_license": "CC-BY-4.0",
+    "dcat_ap_repository": "https://github.com/SEMICeu/DCAT-AP",
+    "dcat_ap_shapes_path": "releases/3.0.0/shacl/dcat-ap-SHACL.ttl",
+    "dcat_ap_commit": "4470b8ea907b7eb9ec55ab22befd1ecd2210ff32",
+    "dcat_ap_shapes_sha256": "92f76609d78d257123e75bc6b7155df5cc0a63f14c29fbc12b0ac95c56af2059",
+    "dcat_ap_license": "CC-BY-4.0",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "intervention_summary": {
+      "GA": "Remove one dct:rights value from free-text multi-rights Distribution fragment",
+      "SB": "Relax designated maxCount on Distribution rights property shape"
+    },
+    "reconstruction": "clean_checkout_fetch_and_construct",
+    "historical_snapshot_note": "Historical packaging G0/S0/SB used rdflib-reserialized copies (G0 isomorphic to HTML extraction; S0/SB isomorphic to upstream\u00b1owl axioms after dropping incidental subclass axioms). Clean reconstruction uses HTML extraction + verbatim DCAT-AP shapes + deterministic maxCount line deletion. GA bytes match the historical evaluation input. Outcomes unchanged.",
+    "blank_focus": true,
+    "historical_original_note": "Historical A_original used cardinality path (SATISFIED). Pre-blank-fix VR-filter briefly NOT_EVALUATED. Current blank-focus identity fix: A_original SATISFIED."
+  },
+  "historical_outcomes": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED",
+    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/reports/five_experiments/c_eval_v02.json",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true
+  },
+  "current_expected": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED"
+  },
+  "historical_vs_current_deltas": [],
+  "delta_interpretation": "Current matches historical core outcomes.",
+  "historical_id": "05_c_eval_v02_dcat_ap_rights"
+}

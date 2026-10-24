@@ -1,0 +1,19 @@
+@prefix ex: <http://datashapes.org/sh/tests/core/property/hasValue-001.test#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:MalePerson a rdfs:Class ;
+    rdfs:label "Male person" ;
+    rdfs:subClassOf rdfs:Resource .
+
+ex:InvalidMalePerson a ex:MalePerson ;
+    rdfs:label "Invalid male person" ;
+    ex:gender "female",
+        "male" .
+
+ex:ValidMalePerson1 a ex:MalePerson ;
+    ex:gender "male" .
+
+ex:ValidMalePerson2 a ex:MalePerson ;
+    ex:gender "female",
+        "male" .
+

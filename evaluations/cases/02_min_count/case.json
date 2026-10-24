@@ -1,0 +1,65 @@
+{
+  "id": "02_min_count",
+  "inventory_name": "pilot2_minCount",
+  "redistribution": "copy",
+  "license_note": "W3C Software and Document License (upstream test suite lineage) + evaluator interventions",
+  "designated": {
+    "focus": "http://datashapes.org/sh/tests/core/property/minCount-001.test#InvalidPerson",
+    "path": "http://datashapes.org/sh/tests/core/property/minCount-001.test#firstName",
+    "source_shape": "http://datashapes.org/sh/tests/core/property/minCount-001.test#PersonShape-firstName",
+    "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "files": {
+    "G0": {
+      "sha256": "b8e6b450b646fed6d857bffdefaf18d6dbec6eca110b1df36f078b3a70905802",
+      "bytes": 2255,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/minCount-001/baseline_combined.ttl"
+    },
+    "S0": {
+      "sha256": "b8e6b450b646fed6d857bffdefaf18d6dbec6eca110b1df36f078b3a70905802",
+      "bytes": 2255,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/minCount-001/baseline_combined.ttl"
+    },
+    "GA": {
+      "sha256": "8f57f870640fec7e585a6a2708d4ba6b61850c9ce4dee7f8fb3ceedc582a3b17",
+      "bytes": 2297,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/minCount-001/after_data_repair_data.ttl"
+    },
+    "SB": {
+      "sha256": "c62c41f1f23d67494cb1af9a31f1154a0ddf15b377f5e50aac9cd21e59840b7b",
+      "bytes": 2255,
+      "source_path_at_packaging": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/minCount-001/after_constraint_revision_shapes.ttl"
+    }
+  },
+  "provenance": {
+    "upstream_kind": "W3C SHACL Core minCount-001",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "local_recovery_paths": {
+      "G0": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/minCount-001/baseline_combined.ttl",
+      "S0": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/minCount-001/baseline_combined.ttl",
+      "GA": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/minCount-001/after_data_repair_data.ttl",
+      "SB": "/home/erdem/Documents/GitHub/shacl-resources/experiments/repair-vs-revision-pilot/outputs/minCount-001/after_constraint_revision_shapes.ttl"
+    }
+  },
+  "historical_outcomes": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED",
+    "source_record": "/home/erdem/Documents/GitHub/shacl-compare/reports/five_experiments/pilot2_mincount.json",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true
+  },
+  "current_expected": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "SATISFIED",
+    "B_original": "VIOLATED"
+  },
+  "historical_vs_current_deltas": [],
+  "delta_interpretation": "Current matches historical core outcomes.",
+  "historical_id": "02_pilot2_minCount"
+}

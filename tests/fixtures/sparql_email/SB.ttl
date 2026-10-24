@@ -1,0 +1,6 @@
+@prefix ex: <http://example.org/sparql#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+ex:PersonShape a sh:NodeShape ;
+  sh:targetClass ex:Person .
+# SPARQL constraint removed (revision clears designated failure under SB)

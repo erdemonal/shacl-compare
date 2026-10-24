@@ -2,7 +2,6 @@ from rdflib import Graph, Literal, URIRef
 
 from shacl_compare.diff import diff_graphs
 
-
 def test_ground_diff_exact():
     before = Graph()
     after = Graph()
@@ -15,7 +14,6 @@ def test_ground_diff_exact():
     assert d["diff_status"] == "RESOLVED"
     assert d["deletion_count"] == 1
     assert d["addition_count"] == 0
-
 
 def test_blank_node_changed_is_ambiguous():
     before = Graph()
@@ -39,7 +37,6 @@ def test_blank_node_changed_is_ambiguous():
     assert d["rdf_triple_deletions"] == []
     assert d["rdf_triple_additions"] == []
     assert d["deletion_count"] is None
-
 
 def test_blank_node_isomorphic_resolved_empty():
     g1 = Graph()

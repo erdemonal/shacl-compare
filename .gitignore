@@ -25,6 +25,9 @@ reports/
 .out/
 .tmp/
 
+# Evaluation workdir (materialized non-redistributable graphs)
+evaluations/.workdir/
+
 # Local notes and agent scratch (untracked only)
 notes/
 scratch/

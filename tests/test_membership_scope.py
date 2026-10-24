@@ -3,9 +3,7 @@ from rdflib.namespace import RDF, SH
 
 from shacl_compare.targets import all_targets, membership_for_focus
 
-
 EX = URIRef("http://example.org/ns#")
-
 
 def _graphs():
     data = Graph()
@@ -28,10 +26,8 @@ def _graphs():
     shapes.add((other, SH.targetClass, EX + "Agent"))
     return data, shapes, str(node), str(prop)
 
-
 def test_membership_ignores_unrelated_target_shape():
     data, shapes, focus, prop = _graphs()
-    # Leave PersonShape (drop type Person) but remain Agent.
     data.remove((URIRef(focus), RDF.type, EX + "Person"))
 
     tables = all_targets(data, shapes, [])
@@ -39,7 +35,6 @@ def test_membership_ignores_unrelated_target_shape():
     assert memb["targeted"] is False
     assert memb["status"] == "LOST_OR_NOT_IN_OWNER"
     assert str(EX + "AgentShape") not in memb.get("owner_shapes", [])
-
 
 def test_membership_retained_only_for_owner_shape():
     data, shapes, focus, prop = _graphs()

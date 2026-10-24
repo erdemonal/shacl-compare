@@ -1,0 +1,20 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+[] dcat:distribution [ a dcat:Distribution ;
+            dct:rights [ a dct:RightsStatement ;
+                    dct:description """
+        The dataset contains parts which are restricted 
+        by the data providers and not to be made public. 
+        For further information and specification regarding 
+        the use limitations and constraints please consult 
+        the file WISE_WFD_ReferenceSpatialDataSets_2020-04-02.pdf 
+        which is provided together with the data.    
+      """@en ] ] .
+
+[] a dct:RightsStatement ;
+    dct:description """
+        public access limited according to Article 13(1)(b) 
+	of the INSPIRE Directive
+      """@en .
+

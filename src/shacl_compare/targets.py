@@ -10,10 +10,7 @@ from shacl_compare.terms import node_focus_key
 
 
 def shacl_instances(data: Graph, class_node: Node) -> set[Node]:
-    """SHACL instances of class_node in data (rdf:type / rdfs:subClassOf*).
-
-    Subclass triples are taken from the data graph (SHACL 1.0).
-    """
+    """SHACL instances of class_node (rdf:type / rdfs:subClassOf*)."""
     subclasses: set[Node] = {class_node}
     changed = True
     while changed:
@@ -36,7 +33,14 @@ def node_shapes(shapes: Graph) -> list[Node]:
 
 
 def find_owner_node_shapes(shapes: Graph, property_shape: str | Node) -> list[Node]:
-    ps = property_shape if isinstance(property_shape, Node) else URIRef(property_shape)
+    from shacl_compare.designate import resolve_shape_node
+
+    if isinstance(property_shape, Node):
+        ps: Node | None = property_shape
+    else:
+        ps = resolve_shape_node(shapes, property_shape)
+    if ps is None:
+        return []
     return sorted(shapes.subjects(SH.property, ps), key=str)
 
 
@@ -107,7 +111,6 @@ def membership_for_focus(
     source_shape: str | None,
     shapes: Graph | None = None,
 ) -> dict[str, Any]:
-    """Membership only under node shapes that own the designated property shape."""
     if not source_shape or shapes is None:
         return {
             "targeted": False,
@@ -116,11 +119,16 @@ def membership_for_focus(
             "reason": "missing_source_shape_or_shapes_graph",
         }
 
+    from shacl_compare.designate import resolve_shape_node
+
     owners = find_owner_node_shapes(shapes, source_shape)
     if not owners:
-        # Property shape may itself be used as a standalone shape; treat it as owner.
-        if any(True for _ in shapes.predicate_objects(URIRef(source_shape))):
-            owners = [URIRef(source_shape)]
+        # Standalone property shapes act as their own owner.
+        resolved = resolve_shape_node(shapes, source_shape)
+        if resolved is not None and any(
+            True for _ in shapes.predicate_objects(resolved)
+        ):
+            owners = [resolved]
         else:
             return {
                 "targeted": False,

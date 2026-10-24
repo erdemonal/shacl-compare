@@ -7,7 +7,6 @@ from shacl_compare.cli import main
 
 FIX = Path(__file__).parent / "fixtures" / "other_focus"
 
-
 def test_other_focus_differential(tmp_path: Path):
     out = tmp_path / "report.json"
     rc = main(

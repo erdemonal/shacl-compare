@@ -47,8 +47,8 @@ def diff_graphs(before: Graph, after: Graph) -> dict[str, Any]:
     return {
         "diff_status": "AMBIGUOUS",
         "reason": (
-            "blank_nodes_present_and_graphs_not_isomorphic;"
-            " no unique triple edit mapping established"
+            "blank_nodes_present_and_graphs_not_isomorphic_"
+            "no_unique_triple_edit_mapping_established"
         ),
         "before_triple_count": len(before),
         "after_triple_count": len(after),

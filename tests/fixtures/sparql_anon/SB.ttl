@@ -1,0 +1,5 @@
+@prefix ex: <http://example.org/sparql#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+[] a sh:NodeShape ;
+  sh:targetClass ex:Person .

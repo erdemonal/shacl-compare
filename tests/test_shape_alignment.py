@@ -3,9 +3,7 @@ from rdflib.namespace import RDF, SH, XSD
 
 from shacl_compare.designate import align_source_shape
 
-
 EX = URIRef("http://example.org/ns#")
-
 
 def _baseline():
     g = Graph()
@@ -17,7 +15,6 @@ def _baseline():
     g.add((prop, SH.datatype, XSD.string))
     g.add((prop, SH.maxCount, Literal(1)))
     return g, str(prop), str(EX + "firstName")
-
 
 def test_iri_present_but_path_changed_is_unresolved():
     base, prop, path = _baseline()
@@ -32,7 +29,6 @@ def test_iri_present_but_path_changed_is_unresolved():
     assert result["shape_alignment"] == "UNRESOLVED"
     assert "path" in result["reason"]
 
-
 def test_iri_only_as_object_reference_is_unresolved():
     base, prop, path = _baseline()
     after = Graph()
@@ -41,7 +37,6 @@ def test_iri_only_as_object_reference_is_unresolved():
         base, after, prop, path, str(SH.MaxCountConstraintComponent)
     )
     assert result["shape_alignment"] == "UNRESOLVED"
-
 
 def test_same_iri_path_parent_aligned_when_maxcount_deleted():
     base, prop, path = _baseline()
@@ -55,7 +50,6 @@ def test_same_iri_path_parent_aligned_when_maxcount_deleted():
     assert result["shape_alignment"] == "ALIGNED"
     assert result["aligned_source_shape"] == prop
     assert result.get("constraint_parameter_status") == "ABSENT"
-
 
 def test_maxcount_revised_still_aligned():
     base, prop, path = _baseline()

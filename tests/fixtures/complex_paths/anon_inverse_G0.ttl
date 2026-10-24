@@ -1,0 +1,4 @@
+@prefix ex: <http://example.org/cpath#> .
+
+ex:Kid a ex:Child .
+# No parentOf linking to Kid → inverse path empty → minCount 1 fails.

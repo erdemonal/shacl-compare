@@ -24,13 +24,38 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--data-repair", type=Path, required=True)
     p.add_argument("--shapes-revision", type=Path, required=True)
     p.add_argument("--focus", required=True, help="Focus node IRI or blank-node focus key")
-    p.add_argument("--path", required=True, help="sh:resultPath IRI (PredicatePath)")
-    p.add_argument("--source-shape", required=True)
+    p.add_argument(
+        "--path",
+        required=True,
+        help=(
+            "Designated sh:resultPath. Use an absolute IRI for a PredicatePath, "
+            "or empty/non-IRI text for node-level or complex paths matched by "
+            "structural fingerprint."
+        ),
+    )
+    p.add_argument(
+        "--source-shape",
+        default=None,
+        help=(
+            "Optional absolute IRI of sh:sourceShape. Omit for anonymous property "
+            "shapes (matched by focus, path, component, and severity). Useful for "
+            "complex paths so fingerprints resolve across graph reloads."
+        ),
+    )
     p.add_argument("--component", required=True)
     p.add_argument(
         "--severity",
         default=str(SH.Violation),
         help=f"Default: {SH.Violation}",
+    )
+    p.add_argument(
+        "--designation-index",
+        type=int,
+        default=None,
+        help=(
+            "1-based index when focus, path, component, and severity match more than "
+            "one baseline ValidationResult."
+        ),
     )
     p.add_argument(
         "--focus-key",
@@ -59,6 +84,7 @@ def main(argv: list[str] | None = None) -> int:
         focus_key_properties=args.focus_key_properties,
         requirement_card=args.requirement_card,
         out=args.out,
+        designation_index=args.designation_index,
     )
     try:
         report = run_compare(cfg)

@@ -1,0 +1,3 @@
+@prefix ex: <http://example.org/sparql#> .
+
+ex:Alice a ex:Person .

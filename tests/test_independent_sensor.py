@@ -7,7 +7,6 @@ from shacl_compare.cli import main
 
 FIX = Path(__file__).parent / "fixtures" / "sensor_datatype"
 
-
 def test_independent_datatype_case_not_person_firstname(tmp_path: Path):
     out = tmp_path / "report.json"
     rc = main(
@@ -43,7 +42,6 @@ def test_independent_datatype_case_not_person_firstname(tmp_path: Path):
     )
     assert report["meta"]["diff_iso_size_bound"]["not_a_benchmarked_threshold"] is True
     assert "supported_scope_note" in report["meta"]
-
 
 def test_sparql_shapes_flagged_in_undetermined(tmp_path: Path):
     shapes = tmp_path / "sparql_shapes.ttl"

@@ -9,9 +9,7 @@ from shacl_compare.validation import run_validation
 
 FIX = Path(__file__).parent / "fixtures" / "bnode_data"
 
-
 def test_bnode_data_diff_ambiguous_but_validation_runs(tmp_path: Path):
-    # Type-only focus key stays stable across repair; label-based keys would drift.
     base = run_validation(
         load_graph(FIX / "G0.ttl"),
         load_graph(FIX / "S0.ttl"),
@@ -52,7 +50,6 @@ def test_bnode_data_diff_ambiguous_but_validation_runs(tmp_path: Path):
     assert "exact_data_triple_edit_list" in report["undetermined"]
     assert report["intervention_A"]["result_outcome"] == "CLEAR"
     assert report["intervention_B"]["result_outcome"] == "CLEAR"
-
 
 def test_bnode_focus_key_drift_is_not_comparable(tmp_path: Path):
     from rdflib import URIRef

@@ -1,0 +1,10 @@
+@prefix ex: <http://datashapes.org/sh/tests/core/targets/targetSubjectsOf-001.test#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:MyClass a rdfs:Class .
+
+ex:InvalidInstance1 ex:myProperty "A",
+        "B" .
+
+ex:ValidInstance1 ex:myProperty "A" .
+
