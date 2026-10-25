@@ -4,17 +4,17 @@ SHACL Compare is a Python command-line tool for comparing a proposed RDF data re
 
 ## Formal model
 
-Let \(G_0\) be the original RDF data graph and \(S_0\) the original SHACL shapes graph. Let \(G_A\) be the data graph after a repair and \(S_B\) the shapes graph after a revision. For a SHACL validation procedure \(V\), the three validation runs are
+Let $G_0$ be the original RDF data graph and $S_0$ the original SHACL shapes graph. Let $G_A$ be the data graph after a repair and $S_B$ the shapes graph after a revision. For a SHACL validation procedure $V$, the three validation runs are
 
 $$
-V_0 = V(G_0,S_0), \qquad
-V_A = V(G_A,S_0), \qquad
-V_B = V(G_0,S_B).
+V_0 = V(G_0, S_0),\quad
+V_A = V(G_A, S_0),\quad
+V_B = V(G_0, S_B).
 $$
 
-A validation result \(\delta \in \mathrm{Results}(V_0)\) is designated for comparison. Its disappearance under \(V_A\) or \(V_B\) is reported separately from satisfaction of the original constraint under \(S_0\).
+A validation result $\delta \in \mathrm{Results}(V_0)$ is designated for comparison. Its disappearance under $V_A$ or $V_B$ is reported separately from satisfaction of the original constraint under $S_0$.
 
-In particular, clearing \(\delta\) after changing \(S_0\) does not imply that the original constraint is satisfied:
+In particular, clearing $\delta$ after changing $S_0$ does not imply that the original constraint is satisfied:
 
 $$
 \mathrm{Clear}(\delta, V_B)
