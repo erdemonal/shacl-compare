@@ -15,46 +15,49 @@ def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="shacl-compare",
         description=(
-            "Compare a supplied RDF data repair and SHACL constraint revision "
-            "against the same designated validation failure."
+            "Compare an RDF data repair and a SHACL shapes revision for one "
+            "designated baseline validation result."
         ),
     )
     p.add_argument("--data-baseline", type=Path, required=True)
     p.add_argument("--shapes-baseline", type=Path, required=True)
     p.add_argument("--data-repair", type=Path, required=True)
     p.add_argument("--shapes-revision", type=Path, required=True)
-    p.add_argument("--focus", required=True, help="Focus node IRI or blank-node focus key")
+    p.add_argument(
+        "--focus",
+        required=True,
+        help="Focus node (IRI, or blank-node focus key)",
+    )
     p.add_argument(
         "--path",
         required=True,
         help=(
-            "Designated sh:resultPath. Use an absolute IRI for a PredicatePath, "
-            "or empty/non-IRI text for node-level or complex paths matched by "
-            "structural fingerprint."
+            "sh:resultPath of the designated result. Absolute IRI for a "
+            "PredicatePath; empty or non-IRI value when the path is absent or "
+            "complex (matched by fingerprint)."
         ),
     )
     p.add_argument(
         "--source-shape",
         default=None,
         help=(
-            "Optional absolute IRI of sh:sourceShape. Omit for anonymous property "
-            "shapes (matched by focus, path, component, and severity). Useful for "
-            "complex paths so fingerprints resolve across graph reloads."
+            "sh:sourceShape IRI. Omit for anonymous shapes. For complex paths, "
+            "an IRI helps resolve the path fingerprint after reload."
         ),
     )
     p.add_argument("--component", required=True)
     p.add_argument(
         "--severity",
         default=str(SH.Violation),
-        help=f"Default: {SH.Violation}",
+        help=f"Result severity (default: {SH.Violation})",
     )
     p.add_argument(
         "--designation-index",
         type=int,
         default=None,
         help=(
-            "1-based index when focus, path, component, and severity match more than "
-            "one baseline ValidationResult."
+            "1-based index if several baseline results share the same focus, "
+            "path, component, and severity"
         ),
     )
     p.add_argument(
@@ -62,7 +65,7 @@ def build_parser() -> argparse.ArgumentParser:
         dest="focus_key_properties",
         action="append",
         default=[],
-        help="Property IRI used to build blank-node focus keys (repeatable)",
+        help="Property IRI for blank-node focus keys (may be repeated)",
     )
     p.add_argument("--requirement-card", type=Path, default=None)
     p.add_argument("--out", type=Path, required=True)

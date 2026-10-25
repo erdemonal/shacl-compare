@@ -16,7 +16,7 @@ def test_package_manifest_has_nine_cases():
     package = json.loads((PKG / "manifest.json").read_text(encoding="utf-8"))
     assert package["n_cases"] == 9
     assert len(package["cases"]) == 9
-    assert (PKG / "SOURCES.md").is_file()
+    assert (PKG / "README.md").is_file()
     assert (PKG / "checksums.sha256").is_file()
     assert (PKG / "run_evaluations.py").is_file()
     assert (PKG / "prepare_evaluations.py").is_file()
