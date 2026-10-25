@@ -12,14 +12,14 @@ V_A = V(G_A,S_0), \qquad
 V_B = V(G_0,S_B).
 $$
 
-A validation result \(\delta \in \operatorname{Results}(V_0)\) is designated for comparison. Its disappearance under \(V_A\) or \(V_B\) is reported separately from satisfaction of the original constraint under \(S_0\).
+A validation result \(\delta \in \mathrm{Results}(V_0)\) is designated for comparison. Its disappearance under \(V_A\) or \(V_B\) is reported separately from satisfaction of the original constraint under \(S_0\).
 
 In particular, clearing \(\delta\) after changing \(S_0\) does not imply that the original constraint is satisfied:
 
 $$
-\operatorname{Clear}(\delta,V_B)
-\;\not\Rightarrow\;
-\operatorname{Satisfied}_{S_0}(\delta,G_0).
+\mathrm{Clear}(\delta, V_B)
+\not\Rightarrow
+\mathrm{Satisfied}_{S_0}(\delta, G_0).
 $$
 
 The report compares the outcomes of both interventions, their effects on the original constraint, and any additional violations.
