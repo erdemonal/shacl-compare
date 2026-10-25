@@ -104,7 +104,7 @@ def main(argv: list[str] | None = None) -> int:
         "package": "evaluations",
         "n": len(results),
         "n_ok": n_ok,
-        "all_ok": n_ok == len(results) == 9,
+        "all_ok": n_ok == len(results) == 12,
         "results": results,
     }
     print(json.dumps(summary, indent=2))

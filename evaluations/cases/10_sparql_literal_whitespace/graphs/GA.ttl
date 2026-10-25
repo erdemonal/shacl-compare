@@ -1,0 +1,5 @@
+@prefix ex: <http://example.org/audit#> .
+
+# One-space label does not satisfy the two-space literal requirement in S0.
+ex:N a ex:T ;
+  ex:label "hello world" .

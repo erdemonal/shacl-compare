@@ -1,0 +1,6 @@
+@prefix ex: <http://example.org/ns#> .
+
+# Same excess firstNames, but no rdf:type ex:Person → leaves targetClass membership.
+ex:Node1
+  ex:firstName "a" ;
+  ex:firstName "b" .

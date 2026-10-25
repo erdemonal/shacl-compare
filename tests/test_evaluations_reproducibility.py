@@ -12,10 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 PKG = ROOT / "evaluations"
 
 @pytest.mark.skipif(not PKG.is_dir(), reason="evaluations package missing")
-def test_package_manifest_has_nine_cases():
+def test_package_manifest_has_twelve_cases():
     package = json.loads((PKG / "manifest.json").read_text(encoding="utf-8"))
-    assert package["n_cases"] == 9
-    assert len(package["cases"]) == 9
+    assert package["n_cases"] == 12
+    assert len(package["cases"]) == 12
     assert (PKG / "README.md").is_file()
     assert (PKG / "checksums.sha256").is_file()
     assert (PKG / "run_evaluations.py").is_file()
@@ -61,4 +61,4 @@ def test_prepare_and_run_evaluations():
     assert run.returncode == 0, run.stderr + run.stdout
     summary = json.loads(run.stdout)
     assert summary["all_ok"] is True
-    assert summary["n_ok"] == 9
+    assert summary["n_ok"] == 12

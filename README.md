@@ -2,7 +2,7 @@
 
 SHACL Compare is a Python command-line tool for comparing a proposed RDF data repair with a proposed SHACL constraint revision for the validation failure. It uses [pySHACL](https://github.com/RDFLib/pySHACL) for validation and reports the effects of both changes without choosing a preferred intervention.
 
-## Formal model
+## Comparison model
 
 Let $G_0$ be the original RDF data graph and $S_0$ the original SHACL shapes graph. Let $G_A$ be the data graph after a repair and $S_B$ the shapes graph after a revision. For a SHACL validation procedure $V$, the three validation runs are
 
@@ -12,7 +12,7 @@ V_A = V(G_A, S_0),\quad
 V_B = V(G_0, S_B).
 $$
 
-A validation result $\delta \in \mathrm{Results}(V_0)$ is designated for comparison. Its disappearance under $V_A$ or $V_B$ is reported separately from satisfaction of the original constraint under $S_0$.
+A validation result $\delta \in \mathrm{Results}(V_0)$ is designated for comparison. Clearing of $\delta$ under $V_A$ or $V_B$ is distinguished from satisfaction of the original constraint under $S_0$.
 
 In particular, clearing $\delta$ after changing $S_0$ does not imply that the original constraint is satisfied:
 
@@ -60,6 +60,6 @@ python evaluations/prepare_evaluations.py
 python evaluations/run_evaluations.py
 ```
 
-The nine evaluation cases are stored in [`evaluations/cases/`](evaluations/cases/). Some require network access to retrieve pinned upstream materials. Provenance, attribution, and reconstruction details are documented in [`evaluations/README.md`](evaluations/README.md).
+The twelve evaluation cases are stored in [`evaluations/cases/`](evaluations/cases/). Some require network access to retrieve pinned upstream materials. Provenance, attribution, and reconstruction details are documented in [`evaluations/README.md`](evaluations/README.md).
 
 SHACL Compare analyzes data repairs and constraint revisions provided by the user. It uses pySHACL for validation and does not generate or rank solutions.

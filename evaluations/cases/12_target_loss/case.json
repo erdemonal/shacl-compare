@@ -1,0 +1,67 @@
+{
+  "inventory_name": "target_loss",
+  "redistribution": "copy",
+  "license_note": "Evaluator-authored synthetic fixture adapted from the unit-test suite",
+  "designated": {
+    "focus": "http://example.org/ns#Node1",
+    "path": "http://example.org/ns#firstName",
+    "source_shape": "http://example.org/ns#PersonShape-firstName",
+    "component": "http://www.w3.org/ns/shacl#MaxCountConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "provenance": {
+    "upstream_kind": "synthetic",
+    "source_test": "tests/test_target_loss.py::test_clear_with_target_loss_not_satisfied",
+    "source_fixture": "tests/fixtures/target_loss/",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "intervention_summary": {
+      "GA": "Remove rdf:type ex:Person while retaining two ex:firstName values (leaves targetClass)",
+      "SB": "Raise sh:maxCount from 1 to 2 on the designated property shape"
+    },
+    "scientific_role": "Designated CLEAR with target membership LOST under A; original constraint NOT_EVALUATED (focus_not_targeted). Distinguishes disappearance of a validation result from satisfaction of the original constraint."
+  },
+  "current_expected": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "NOT_EVALUATED",
+    "B_original": "VIOLATED"
+  },
+  "expected_details": {
+    "A_target_membership": "LOST",
+    "B_target_membership": "RETAINED",
+    "A_original_reason": "focus_not_targeted"
+  },
+  "historical_outcomes": {
+    "A_outcome": "CLEAR",
+    "B_outcome": "CLEAR",
+    "A_original": "NOT_EVALUATED",
+    "B_original": "VIOLATED",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true,
+    "historical_report_id": "unit_test_target_loss",
+    "historical_report_note": "Lifted from the unit-test suite for evaluation coverage of target loss."
+  },
+  "historical_vs_current_deltas": [],
+  "delta_interpretation": "Evaluation packaging of an existing unit-test scenario.",
+  "id": "12_target_loss",
+  "files": {
+    "G0": {
+      "sha256": "320a6a1f60792b57e70a3e4b8f768611d9b6b7522c1ca1481ebb07b8eafcfed5",
+      "bytes": 107
+    },
+    "S0": {
+      "sha256": "3a8fa6358c32e8a8dd02f66c353abd3a9fd09548a6dd66396bad897b7a3e9b27",
+      "bytes": 331
+    },
+    "GA": {
+      "sha256": "907bc2a561bcb0709a0c5a1b5bbb819e469827cd6b9ce3d5ea93293b7fdf785f",
+      "bytes": 178
+    },
+    "SB": {
+      "sha256": "ca9f87d0b94b3540e5384699b40c75cfc77546f87e909c76f31a45927ccd047c",
+      "bytes": 331
+    }
+  }
+}

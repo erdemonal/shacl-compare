@@ -1,0 +1,67 @@
+{
+  "inventory_name": "sparql_literal_whitespace",
+  "redistribution": "copy",
+  "license_note": "Evaluator-authored synthetic fixture adapted from the unit-test suite",
+  "designated": {
+    "focus": "http://example.org/audit#N",
+    "path": "",
+    "source_shape": "http://example.org/audit#S",
+    "component": "http://www.w3.org/ns/shacl#SPARQLConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "provenance": {
+    "upstream_kind": "synthetic",
+    "source_test": "tests/test_sparql_literal_whitespace.py::test_literal_whitespace_compare_clear",
+    "source_fixture": "tests/fixtures/sparql_literal_whitespace/",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "intervention_summary": {
+      "GA": "Add ex:label with a single internal space (\"hello world\"); does not satisfy the two-space literal in S0",
+      "SB": "Revise sh:select so the required literal has one space (\"hello world\")"
+    },
+    "scientific_role": "Designated PERSIST under data repair versus CLEAR under query revision; shows that a proposed data edit need not remove the designated failure."
+  },
+  "current_expected": {
+    "A_outcome": "PERSIST",
+    "B_outcome": "CLEAR",
+    "A_original": "VIOLATED",
+    "B_original": "VIOLATED"
+  },
+  "expected_details": {
+    "A_target_membership": "RETAINED",
+    "B_target_membership": "RETAINED",
+    "B_note": "Designated CLEAR under SB because the SPARQL fingerprint changes; V(G0,SB) still yields a SPARQL violation for the revised query (recorded as new)."
+  },
+  "historical_outcomes": {
+    "A_outcome": "PERSIST",
+    "B_outcome": "CLEAR",
+    "A_original": "VIOLATED",
+    "B_original": "VIOLATED",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true,
+    "historical_report_id": "unit_test_sparql_literal_whitespace",
+    "historical_report_note": "Lifted from the unit-test suite for evaluation coverage of designated PERSIST."
+  },
+  "historical_vs_current_deltas": [],
+  "delta_interpretation": "Evaluation packaging of an existing unit-test scenario.",
+  "id": "10_sparql_literal_whitespace",
+  "files": {
+    "G0": {
+      "sha256": "3a906fee119d1f8329dfa9158771c2062db25ece4d6c98a72ec4fa0569169a21",
+      "bytes": 57
+    },
+    "S0": {
+      "sha256": "ada68d22f0f0e8d1a163b5ac762a37775356ab94954e287846917e211959acd6",
+      "bytes": 356
+    },
+    "GA": {
+      "sha256": "8c3717a010c7753b2baf9b5eede7818f12a8ded7e7c3c0dcf8f5823fb43c7a56",
+      "bytes": 160
+    },
+    "SB": {
+      "sha256": "c097a79879616ac1bf6855760a023598f6dc268e2f5c0cfb2fccb5c374949253",
+      "bytes": 355
+    }
+  }
+}

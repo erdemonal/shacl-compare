@@ -1,0 +1,70 @@
+{
+  "inventory_name": "sequence_path_revision",
+  "redistribution": "copy",
+  "license_note": "Evaluator-authored synthetic fixture adapted from the unit-test suite",
+  "designated": {
+    "focus": "http://example.org/cpath#Alice",
+    "path": "",
+    "source_shape": "http://example.org/cpath#AddressCodePS",
+    "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+    "severity": "http://www.w3.org/ns/shacl#Violation"
+  },
+  "provenance": {
+    "upstream_kind": "synthetic",
+    "source_test": "tests/test_complex_paths.py::test_sequence_path_revision_unresolved_alignment",
+    "source_fixture": "tests/fixtures/complex_paths/sequence_*.ttl",
+    "interventions_by": "evaluator",
+    "interventions_not_upstream_maintainer": true,
+    "intervention_summary": {
+      "GA": "Unchanged baseline data (byte-identical to G0). Not a data repair.",
+      "SB": "Revise sequence path from (ex:address ex:code) to (ex:address ex:postalCode)"
+    },
+    "data_side": "unchanged_baseline",
+    "scientific_role": "Designated NOT_COMPARABLE under shapes revision when path identity cannot be aligned; refuses a false CLEAR. Side A is a no-op baseline re-run (PERSIST), not an attempted repair."
+  },
+  "current_expected": {
+    "A_outcome": "PERSIST",
+    "B_outcome": "NOT_COMPARABLE",
+    "A_original": "VIOLATED",
+    "B_original": "VIOLATED"
+  },
+  "expected_details": {
+    "A_target_membership": "RETAINED",
+    "B_shape_alignment": "UNRESOLVED",
+    "A_note": "GA equals G0; PERSIST confirms the designated failure remains without a data edit."
+  },
+  "historical_outcomes": {
+    "A_outcome": "PERSIST",
+    "B_outcome": "NOT_COMPARABLE",
+    "A_original": "VIOLATED",
+    "B_original": "VIOLATED",
+    "tool_version": "0.1.0",
+    "preserved": true,
+    "not_rewritten": true,
+    "historical_report_id": "unit_test_sequence_path_revision",
+    "historical_report_note": "Lifted from the unit-test suite for evaluation coverage of NOT_COMPARABLE."
+  },
+  "historical_vs_current_deltas": [],
+  "delta_interpretation": "Evaluation packaging of an existing unit-test scenario.",
+  "id": "11_sequence_path_revision",
+  "files": {
+    "G0": {
+      "sha256": "8a7ccb9e63958b16174e10dac80e60c82e5b6af1268c9a60392bbab7dbf8b206",
+      "bytes": 184
+    },
+    "S0": {
+      "sha256": "861ffb517746a9674aba0f754b640fa3bf4f68147ee2047e606adc634edcbc4f",
+      "bytes": 330
+    },
+    "GA": {
+      "sha256": "8a7ccb9e63958b16174e10dac80e60c82e5b6af1268c9a60392bbab7dbf8b206",
+      "bytes": 184,
+      "construction": "Byte-identical copy of G0.ttl (unchanged baseline input; not a data repair)"
+    },
+    "SB": {
+      "sha256": "64484e673c14ae0b2cf3b2b84e2f20eed1e1f5d8740ad11a7cbebb2824d730d0",
+      "bytes": 336,
+      "construction": "Sequence path revised: (ex:address ex:code) -> (ex:address ex:postalCode)"
+    }
+  }
+}

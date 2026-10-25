@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "research_question": "How can changes to RDF data and SHACL constraints be compared when resolving the same validation failure?",
   "tool_role": "comparator_of_given_interventions_not_generator",
-  "n_cases": 9,
+  "n_cases": 12,
   "cases": [
     {
       "id": "01_max_count",
@@ -175,6 +175,60 @@
         "B_original": "VIOLATED"
       },
       "historical_id": "09_V6_dcat_ap_lu_title_NEW"
+    },
+    {
+      "id": "10_sparql_literal_whitespace",
+      "inventory_name": "sparql_literal_whitespace",
+      "redistribution": "copy",
+      "designated": {
+        "focus": "http://example.org/audit#N",
+        "path": "",
+        "source_shape": "http://example.org/audit#S",
+        "component": "http://www.w3.org/ns/shacl#SPARQLConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "PERSIST",
+        "B_outcome": "CLEAR",
+        "A_original": "VIOLATED",
+        "B_original": "VIOLATED"
+      }
+    },
+    {
+      "id": "11_sequence_path_revision",
+      "inventory_name": "sequence_path_revision",
+      "redistribution": "copy",
+      "designated": {
+        "focus": "http://example.org/cpath#Alice",
+        "path": "",
+        "source_shape": "http://example.org/cpath#AddressCodePS",
+        "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "PERSIST",
+        "B_outcome": "NOT_COMPARABLE",
+        "A_original": "VIOLATED",
+        "B_original": "VIOLATED"
+      }
+    },
+    {
+      "id": "12_target_loss",
+      "inventory_name": "target_loss",
+      "redistribution": "copy",
+      "designated": {
+        "focus": "http://example.org/ns#Node1",
+        "path": "http://example.org/ns#firstName",
+        "source_shape": "http://example.org/ns#PersonShape-firstName",
+        "component": "http://www.w3.org/ns/shacl#MaxCountConstraintComponent",
+        "severity": "http://www.w3.org/ns/shacl#Violation"
+      },
+      "current_expected": {
+        "A_outcome": "CLEAR",
+        "B_outcome": "CLEAR",
+        "A_original": "NOT_EVALUATED",
+        "B_original": "VIOLATED"
+      }
     }
   ],
   "workdir": ".workdir (gitignored); holds prepared graphs for materialize-mode cases",
