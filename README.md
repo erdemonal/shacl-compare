@@ -1,6 +1,6 @@
 # SHACL Compare
 
-SHACL Compare is a Python command-line tool for comparing a proposed RDF data repair with a proposed SHACL constraint revision for the validation failure. It uses [pySHACL](https://github.com/RDFLib/pySHACL) for validation and reports the effects of both changes without choosing a preferred intervention.
+SHACL Compare is a Python command-line tool for comparing a proposed RDF data repair with a proposed SHACL constraint revision for the designated validation failure. It uses [pySHACL](https://github.com/RDFLib/pySHACL) for validation and reports the effects of both changes without choosing a preferred intervention.
 
 ## Comparison model
 
